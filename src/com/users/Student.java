@@ -7,15 +7,34 @@ public class Student {
 	private String[] coursesRegistered;
 	private String status;
 	private String statusDueDate;
+	private String id;
 	
 	public Student(String fname, String lname, String[] coursesRegistered, String status,
-			String statusDueDate) {
+			String statusDueDate, String id) {
 		this.fname = fname;
 		this.lname = lname;
 		this.coursesRegistered = coursesRegistered;
 		this.status = status;
 		this.statusDueDate = statusDueDate;
+		this.id = id;
 	}
+	
+	
+	
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
+	}
+	
 	public String getFname() {
 		return fname;
 	}

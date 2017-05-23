@@ -8,6 +8,7 @@ public class Teacher {
 	private String phone;
 	private String specialization;
 	private String location;
+	private String id;
 	
 	/**
 	 * @param fname
@@ -16,8 +17,9 @@ public class Teacher {
 	 * @param phone
 	 * @param specialization
 	 * @param location
+	 * @param id
 	 */
-	public Teacher(String fname, String lname, String address, String phone, String specialization, String location) {
+	public Teacher(String fname, String lname, String address, String phone, String specialization, String location, String id) {
 		super();
 		this.fname = fname;
 		this.lname = lname;
@@ -25,6 +27,21 @@ public class Teacher {
 		this.phone = phone;
 		this.specialization = specialization;
 		this.location = location;
+		this.id = id;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	/**
