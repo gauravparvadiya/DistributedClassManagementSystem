@@ -1,8 +1,11 @@
 package com.client;
 
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.rmi.Center;
 import com.users.Manager;
 
 public class ManagerClient {
@@ -35,6 +38,22 @@ public class ManagerClient {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		
+		try {  
+	         // Getting the registry 
+	         Registry registry = LocateRegistry.getRegistry(null); 
+	    
+	         // Looking up the registry for the remote object 
+	         Center stub = (Center) registry.lookup("Center"); 
+	    
+	         // Calling the remote method using the obtained object 
+	         stub.createSRecord("Gaurav", "Parvadiya",null , "Active", "23/05/2017"); 
+	         
+	         // System.out.println("Remote method invoked"); 
+	      } catch (Exception e) {
+	         System.err.println("Client exception: " + e.toString()); 
+	         e.printStackTrace(); 
+	      } 
 		
 	}
 
