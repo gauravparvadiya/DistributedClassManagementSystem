@@ -11,11 +11,10 @@ public class CenterServerMTL extends CenterInmplementation {
 	public static void main(String[] args) {
 		try {
 			CenterInmplementation centerimple = new CenterInmplementation();
-
-			Center stub = (Center) UnicastRemoteObject.exportObject(centerimple, 1099);
+			Center stub = (Center) UnicastRemoteObject.exportObject(centerimple, 65535);
 			Registry registry = LocateRegistry.getRegistry();
-
 			registry.bind("Center", stub);
+
 			System.out.println("server ready");
 		} catch (Exception e) {
 			System.err.println("Server exception: " + e.toString());
