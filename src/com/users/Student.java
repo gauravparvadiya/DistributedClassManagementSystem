@@ -1,18 +1,15 @@
 package com.users;
 
-import java.util.ArrayList;
-
 public class Student {
 
 	private String fname;
 	private String lname;
-	private ArrayList<String> coursesRegistered;
+	private String[] coursesRegistered;
 	private String status;
 	private String statusDueDate;
 	
-	public Student(String fname, String lname, ArrayList<String> coursesRegistered, String status,
+	public Student(String fname, String lname, String[] coursesRegistered, String status,
 			String statusDueDate) {
-		//super();
 		this.fname = fname;
 		this.lname = lname;
 		this.coursesRegistered = coursesRegistered;
@@ -31,10 +28,10 @@ public class Student {
 	public void setLname(String lname) {
 		this.lname = lname;
 	}
-	public ArrayList<String> getCoursesRegistered() {
+	public String[] getCoursesRegistered() {
 		return coursesRegistered;
 	}
-	public void setCoursesRegistered(ArrayList<String> coursesRegistered) {
+	public void setCoursesRegistered(String[] coursesRegistered) {
 		this.coursesRegistered = coursesRegistered;
 	}
 	public String getStatus() {
@@ -49,6 +46,5 @@ public class Student {
 	public void setStatusDueDate(String statusDueDate) {
 		this.statusDueDate = statusDueDate;
 	}
-	
 	
 }
