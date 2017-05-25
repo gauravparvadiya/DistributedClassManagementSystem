@@ -1,5 +1,7 @@
 package com.server;
 
+import java.rmi.AlreadyBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -8,8 +10,8 @@ import com.rmi.Center;
 import com.rmi.CenterInmplementation;
 
 public class CenterServerMTL extends CenterInmplementation {
-	public static void main(String[] args) {
-		try {
+	public static void main(String[] args) throws RemoteException, AlreadyBoundException {
+		/*try {
 			CenterInmplementation centerimple = new CenterInmplementation();
 			Center stub = (Center) UnicastRemoteObject.exportObject(centerimple, 65535);
 			Registry registry = LocateRegistry.getRegistry();
@@ -19,7 +21,12 @@ public class CenterServerMTL extends CenterInmplementation {
 		} catch (Exception e) {
 			System.err.println("Server exception: " + e.toString());
 			e.printStackTrace();
-		}
+		}*/
+		
+		CenterInmplementation stub=new CenterInmplementation();
+		Registry registry=LocateRegistry.createRegistry(2964);
+		registry.bind("MTLServer", stub);
+		System.out.println("Server started.");
 	}
 
 }

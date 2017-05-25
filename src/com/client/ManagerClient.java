@@ -1,5 +1,9 @@
 package com.client;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
@@ -8,10 +12,7 @@ import java.util.HashMap;
 import com.rmi.Center;
 import com.users.Manager;
 
-public class ManagerClient {
-
-	
-	
+public class ManagerClient {	
 	/**
 	 * 
 	 */
@@ -29,17 +30,16 @@ public class ManagerClient {
 		ArrayList<Manager> ddo = new ArrayList<Manager>();
 		ddo.add(manager3);
 		
-		HashMap<String, ArrayList<Manager>> managerList = new HashMap<String, ArrayList<Manager>>();
-		managerList.put("MTL", mtl);
-		managerList.put("LVL", lvl);
-		managerList.put("DDO", ddo);
+		HashMap<String, ArrayList<Manager>> managerHashMap = new HashMap<String, ArrayList<Manager>>();
+		managerHashMap.put("MTL", mtl);
+		managerHashMap.put("LVL", lvl);
+		managerHashMap.put("DDO", ddo);
 		
 	}
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+	public static void main(String[] args) throws IOException, NotBoundException {
 		
-		try {  
+		/*try {  
 	         // Getting the registry 
 	         Registry registry = LocateRegistry.getRegistry(null); 
 	    
@@ -54,6 +54,19 @@ public class ManagerClient {
 	         System.err.println("Client exception: " + e.toString()); 
 	         e.printStackTrace(); 
 	      } 
+		*/
+		
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		System.out.println("Enter the Manager ID : ");
+		String managerID=reader.readLine();
+		if(managerID.substring(0, 3).equals("MTL")){
+			System.out.println("in loop");
+			Registry registry = LocateRegistry.getRegistry(2964);
+			System.out.println("got registry");
+			Center stub=(Center)registry.lookup("MTLServer");
+			System.out.println("lookup done");
+		    stub.createSRecord("Hirangi", "Naik", "DSD", "ready", "4/5/17");
+		}
 		
 	}
 

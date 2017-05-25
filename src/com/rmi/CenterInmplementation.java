@@ -7,12 +7,12 @@ public class CenterInmplementation implements Center {
 	@Override
 	public void createTRecord(String firstName, String lastName, String address, String phone, String specialization,
 			String location) throws RemoteException {
-		System.out.println("cretae teacher");
+		System.out.println("create teacher");
 
 	}
 
 	@Override
-	public void createSRecord(String firstName, String lastName, String[] courseRegistered, String status,
+	public void createSRecord(String firstName, String lastName, String courseRegistered, String status,
 			String statusDate) throws RemoteException {
 		System.out.println("create student");
 	}
