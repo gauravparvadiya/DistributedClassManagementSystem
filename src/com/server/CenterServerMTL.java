@@ -10,7 +10,12 @@ import com.rmi.Center;
 import com.rmi.CenterInmplementation;
 
 public class CenterServerMTL extends CenterInmplementation {
-	public static void main(String[] args) throws RemoteException, AlreadyBoundException {
+	protected CenterServerMTL() throws Exception {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public static void main(String[] args) throws Exception {
 		/*try {
 			CenterInmplementation centerimple = new CenterInmplementation();
 			Center stub = (Center) UnicastRemoteObject.exportObject(centerimple, 65535);

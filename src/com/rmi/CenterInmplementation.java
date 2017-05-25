@@ -1,8 +1,14 @@
 package com.rmi;
 
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
-public class CenterInmplementation implements Center {
+public class CenterInmplementation extends UnicastRemoteObject implements Center {
+
+	public CenterInmplementation() throws Exception {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	public void createTRecord(String firstName, String lastName, String address, String phone, String specialization,
