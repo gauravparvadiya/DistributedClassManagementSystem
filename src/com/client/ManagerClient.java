@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.rmi.Center;
 import com.users.Manager;
@@ -44,7 +45,20 @@ public class ManagerClient {
 		Reader reader =  new BufferedReader(new FileReader(f.getAbsolutePath())); //new FileReader("com/res/Manager.json");		
 		JsonParser parser = new JsonParser();
 		JsonArray array = parser.parse(reader).getAsJsonArray();
+<<<<<<< Updated upstream
 		System.out.println(array.get(0));
+=======
+		System.out.println(array);
+		
+		if (array != null) {
+			for (int i = 0; i < array.size(); i++) {
+				JsonObject object = (JsonObject) array.get(i);
+				System.out.println(object.get("managerID"));
+				
+				Manager manager = new Manager(object.get("managerID").toString(),object.get("managerID").toString(),object.get("managerID").toString());
+			}
+		}
+>>>>>>> Stashed changes
 		
 		
 		
