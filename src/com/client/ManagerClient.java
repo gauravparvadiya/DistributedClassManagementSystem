@@ -42,27 +42,9 @@ public class ManagerClient {
 		File f=new File("res/manager.json");
 		System.out.println(f.canRead());
 		Reader reader =  new BufferedReader(new FileReader(f.getAbsolutePath())); //new FileReader("com/res/Manager.json");		
-		//Gson gson=new Gson();
 		JsonParser parser = new JsonParser();
 		JsonArray array = parser.parse(reader).getAsJsonArray();
-		mtl = new ArrayList<Manager>();
-		
-//		GsonBuilder gsonBuilder = new GsonBuilder();
-//		gsonBuilder.registerTypeAdapter(Point.class, new PointAdapter());
-//		Gson gson = gsonBuilder.enableComplexMapKeySerialization().excludeFieldsWithoutExposeAnnotation()
-//				.setPrettyPrinting().create();
-//		mtl = gson.fromJson(reader, new TypeToken<ArrayList<Manager>>() {
-//		}.getType());
-		
-//		Manager m = new Manager();
-//		m.setManagerID(managerID);
-		//mtl.add(array.get(0));
-//		if (array != null) {
-//			for (int i = 0; )
-//		}
-		//Type type = new TypeToken<List<Model>>(){}.getType();
-		System.out.println(array);
-		//JsonReader jsonReader=new JsonReader(reader);
+		System.out.println(array.get(0));
 		
 		
 		
