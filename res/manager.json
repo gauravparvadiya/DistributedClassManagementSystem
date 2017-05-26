@@ -5,6 +5,16 @@
 },
 {
 	"managerID": "MTL0002",
-	"fname": "Hirangi",
+	"fname": "Gaurav",
+	"lname": "Naik"
+},
+{
+	"managerID": "LVL0001",
+	"fname": "Ketan",
+	"lname": "Naik"
+},
+{
+	"managerID": "DDO0001",
+	"fname": "Garvi",
 	"lname": "Naik"
 }]
