@@ -1,35 +1,70 @@
 package com.client;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 import com.rmi.Center;
 import com.users.Manager;
+
+import jdk.nashorn.internal.parser.JSONParser;
 
 public class ManagerClient {	
 	
 	public HashMap<String, ArrayList<Manager>> managerHashMap;
 	public ArrayList<Manager> mtl,lvl,ddo;
+	JSONParser parser;
 	
-	public ManagerClient() {
-		Manager manager1 = new Manager("MTL0001","Gaurav","Parvadiya");
+	public ManagerClient() throws FileNotFoundException {
+		/*Manager manager1 = new Manager("MTL0001","Gaurav","Parvadiya");
 		Manager manager2 = new Manager("LVL0002","Hirangi","Naik");
-		Manager manager3 = new Manager("DDO0003","Jack","Reacher");
+		Manager manager3 = new Manager("DDO0003","Jack","Reacher");*/
 		
-		mtl = new ArrayList<Manager>();
+		/*mtl = new ArrayList<Manager>();
 		mtl.add(manager1);
 		
 		lvl = new ArrayList<Manager>();
 		lvl.add(manager2);
 		
 		ddo = new ArrayList<Manager>();
-		ddo.add(manager3);
+		ddo.add(manager3);*/
+		File f=new File("res/manager.json");
+		System.out.println(f.canRead());
+		Reader reader =  new BufferedReader(new FileReader(f.getAbsolutePath())); //new FileReader("com/res/Manager.json");		
+		//Gson gson=new Gson();
+		JsonParser parser = new JsonParser();
+		JsonArray array = parser.parse(reader).getAsJsonArray();
+		mtl = new ArrayList<Manager>();
+		
+//		GsonBuilder gsonBuilder = new GsonBuilder();
+//		gsonBuilder.registerTypeAdapter(Point.class, new PointAdapter());
+//		Gson gson = gsonBuilder.enableComplexMapKeySerialization().excludeFieldsWithoutExposeAnnotation()
+//				.setPrettyPrinting().create();
+//		mtl = gson.fromJson(reader, new TypeToken<ArrayList<Manager>>() {
+//		}.getType());
+		
+//		Manager m = new Manager();
+//		m.setManagerID(managerID);
+		//mtl.add(array.get(0));
+//		if (array != null) {
+//			for (int i = 0; )
+//		}
+		//Type type = new TypeToken<List<Model>>(){}.getType();
+		System.out.println(array);
+		//JsonReader jsonReader=new JsonReader(reader);
+		
+		
 		
 		managerHashMap = new HashMap<String, ArrayList<Manager>>();
 		managerHashMap.put("MTL", mtl);
