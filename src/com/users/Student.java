@@ -19,8 +19,6 @@ public class Student {
 		this.id = id;
 	}
 	
-	
-	
 	/**
 	 * @return the id
 	 */

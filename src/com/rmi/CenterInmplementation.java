@@ -14,7 +14,6 @@ public class CenterInmplementation extends UnicastRemoteObject implements Center
 	public void createTRecord(String firstName, String lastName, String address, String phone, String specialization,
 			String location) throws RemoteException {
 		System.out.println("create teacher");
-
 	}
 
 	@Override
