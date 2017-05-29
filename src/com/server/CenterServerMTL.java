@@ -22,7 +22,7 @@ import jdk.nashorn.internal.parser.JSONParser;
 
 public class CenterServerMTL extends CenterInmplementation {
 
-	public HashMap<String, ArrayList<Object>> srtrRecords;
+	public final HashMap<String, ArrayList<Object>> srtrRecords = new HashMap<String, ArrayList<Object>>() ;
 	public ArrayList<Object> srtrMTL,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z;
 	JSONParser parser;
 	
@@ -65,7 +65,7 @@ public class CenterServerMTL extends CenterInmplementation {
 			y = new ArrayList<Object>();
 			z = new ArrayList<Object>();
 			
-			srtrRecords = new HashMap<String, ArrayList<Object>>();
+			//srtrRecords = new HashMap<String, ArrayList<Object>>();
 			
 			reader = new BufferedReader(new FileReader(student.getAbsolutePath()));
 			JsonParser parser = new JsonParser();
@@ -231,6 +231,11 @@ public class CenterServerMTL extends CenterInmplementation {
 			e.printStackTrace();
 		}
 	}
+	
+	public HashMap<String, ArrayList<Object>> getMtlMap() {
+		return srtrRecords;
+	}
+	
 	public static void main(String[] args) throws Exception {
 		
 		CenterServerMTL mtl = new CenterServerMTL();
