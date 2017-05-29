@@ -9,6 +9,15 @@ public class Student {
 	private String statusDueDate;
 	private String id;
 	
+	/**
+	 * 
+	 * @param fname
+	 * @param lname
+	 * @param coursesRegistered
+	 * @param status
+	 * @param statusDueDate
+	 * @param id
+	 */
 	public Student(String fname, String lname, String[] coursesRegistered, String status,
 			String statusDueDate, String id) {
 		this.fname = fname;

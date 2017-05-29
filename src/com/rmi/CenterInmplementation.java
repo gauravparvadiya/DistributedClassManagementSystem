@@ -7,18 +7,17 @@ public class CenterInmplementation extends UnicastRemoteObject implements Center
 
 	public CenterInmplementation() throws Exception {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void createTRecord(String firstName, String lastName, String address, String phone, String specialization,
-			String location) throws RemoteException {
+			String location,String id) throws RemoteException {
 		System.out.println("create teacher");
 	}
 
 	@Override
-	public void createSRecord(String firstName, String lastName, String courseRegistered, String status,
-			String statusDate) throws RemoteException {
+	public void createSRecord(String firstName, String lastName, String[] courseRegistered, String status,
+			String statusDate,String id) throws RemoteException {
 		System.out.println("create student");
 	}
 
