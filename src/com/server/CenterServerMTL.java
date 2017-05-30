@@ -64,18 +64,13 @@ public class CenterServerMTL extends CenterInmplementation {
 			y = new ArrayList<Object>();
 			z = new ArrayList<Object>();
 
-			// srtrRecords = new HashMap<String, ArrayList<Object>>();
-
 			reader = new BufferedReader(new FileReader(student.getAbsolutePath()));
 			JsonParser parser = new JsonParser();
 			JsonArray array = parser.parse(reader).getAsJsonArray();
-			// System.out.println(array);
 
 			if (array != null) {
 				for (int i = 0; i < 4; i++) {
 					JsonObject object = (JsonObject) array.get(i);
-					// System.out.println("\n" +
-					// object.get("id").getAsString());
 					JsonArray courseList = object.get("coursesRegistered").getAsJsonArray();
 					String[] coursesRegistered = new String[courseList.size()];
 					for (int j = 0; j < courseList.size(); j++) {
@@ -90,13 +85,10 @@ public class CenterServerMTL extends CenterInmplementation {
 
 			reader = new BufferedReader(new FileReader(teacher.getAbsolutePath()));
 			array = parser.parse(reader).getAsJsonArray();
-			// System.out.println(array);
 
 			if (array != null) {
 				for (int i = 0; i < 4; i++) {
 					JsonObject object = (JsonObject) array.get(i);
-					// System.out.println("\n" +
-					// object.get("id").getAsString());
 					Teacher t = new Teacher(object.get("fname").getAsString(), object.get("lname").getAsString(),
 							object.get("address").getAsString(), object.get("phone").getAsString(),
 							object.get("specialization").getAsString(), object.get("location").getAsString(),
@@ -111,14 +103,10 @@ public class CenterServerMTL extends CenterInmplementation {
 				Character ch;
 				if (srtrMTL.get(ij) instanceof Student) {
 					stud = (Student) srtrMTL.get(ij);
-					// System.out.println(stud.getLname());
 					ch = stud.getLname().toUpperCase().charAt(0);
-					// System.out.println(ch);
 				} else {
 					teach = (Teacher) srtrMTL.get(ij);
-					// System.out.println(teach.getLname());
 					ch = teach.getLname().toUpperCase().charAt(0);
-					// System.out.println(ch);
 				}
 				switch (ch) {
 				case 'A':

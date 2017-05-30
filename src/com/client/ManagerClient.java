@@ -21,6 +21,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.rmi.Center;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.users.Manager;
 
 import jdk.nashorn.internal.parser.JSONParser;
@@ -31,7 +32,7 @@ public class ManagerClient {
 	public ArrayList<Manager> mtl, lvl, ddo;
 	JSONParser parser;
 	static Registry registry;
-	
+
 	public ManagerClient() throws FileNotFoundException {
 
 		File f = new File("res/manager.json");
@@ -49,7 +50,7 @@ public class ManagerClient {
 		if (array != null) {
 			for (int i = 0; i < array.size(); i++) {
 				JsonObject object = (JsonObject) array.get(i);
-				//System.out.println(object.get("managerID").getAsString());
+				// System.out.println(object.get("managerID").getAsString());
 				Manager manager = new Manager(object.get("managerID").toString(), object.get("fname").toString(),
 						object.get("lname").toString());
 				if (object.get("managerID").getAsString().substring(0, 3).equals("MTL")) {
@@ -60,13 +61,9 @@ public class ManagerClient {
 					ddo.add(manager);
 				}
 			}
-			//System.out.println(mtl);
-			//System.out.println(lvl);
-			//System.out.println(ddo);
 			managerHashMap.put("MTL", mtl);
 			managerHashMap.put("LVL", lvl);
 			managerHashMap.put("DDO", ddo);
-			// System.out.println(managerHashMap);
 		}
 	}
 
@@ -83,9 +80,6 @@ public class ManagerClient {
 					String lname = manager.getLname();
 					System.out.println("Welcome , " + fname.substring(1, fname.length() - 1) + " "
 							+ lname.substring(1, lname.length() - 1));
-					//Registry registry = LocateRegistry.getRegistry(2964);
-					//Center stub = (Center) registry.lookup("MTLServer");
-					//stub.createSRecord("Hirangi", "Naik", "DSD", "ready", "4/5/17","sr01");
 					return true;
 				} else {
 					return false;
@@ -100,9 +94,6 @@ public class ManagerClient {
 					String lname = manager.getLname();
 					System.out.println("Welcome , " + fname.substring(1, fname.length() - 1) + " "
 							+ lname.substring(1, lname.length() - 1));
-					//Registry registry = LocateRegistry.getRegistry(1212);
-					//Center stub = (Center) registry.lookup("LVLServer");
-					//stub.createSRecord("Hirangi", "Naik", "DSD", "ready", "4/5/17","sr01");
 					return true;
 
 				} else {
@@ -119,9 +110,6 @@ public class ManagerClient {
 					String lname = manager.getLname();
 					System.out.println("Welcome , " + fname.substring(1, fname.length() - 1) + " "
 							+ lname.substring(1, lname.length() - 1));
-					//Registry registry = LocateRegistry.getRegistry(1111);
-					//Center stub = (Center) registry.lookup("DDOServer");
-					//stub.createSRecord("Hirangi", "Naik", "DSD", "ready", "4/5/17","sr01");
 					return true;
 				} else {
 					return false;
@@ -135,73 +123,88 @@ public class ManagerClient {
 		return false;
 	}
 
-	public static void connect_teacher(String managerID,String fn,String ln,String address,String ph,String spec,String loc,String id) throws RemoteException, NotBoundException {
-		if(managerID.substring(0, 3).equals("MTL")){
+	public static void connect_teacher(String managerID, String fn, String ln, String address, String ph, String spec,
+			String loc, String id) throws RemoteException, NotBoundException {
+		if (managerID.substring(0, 3).equals("MTL")) {
 			registry = LocateRegistry.getRegistry(2964);
 			Center stub = (Center) registry.lookup("MTLServer");
-			stub.createTRecord(fn,ln,address,ph,spec,loc,id);
-		}
-		else if(managerID.substring(0, 3).equals("LVL")){
+			stub.createTRecord(fn, ln, address, ph, spec, loc, id);
+		} else if (managerID.substring(0, 3).equals("LVL")) {
 			registry = LocateRegistry.getRegistry(1212);
 			Center stub = (Center) registry.lookup("LVLServer");
-			stub.createTRecord(fn,ln,address,ph,spec,loc,id);
-		}
-		else
-		{
+			stub.createTRecord(fn, ln, address, ph, spec, loc, id);
+		} else {
 			registry = LocateRegistry.getRegistry(1111);
 			Center stub = (Center) registry.lookup("DDOServer");
-			stub.createTRecord(fn,ln,address,ph,spec,loc,id);
+			stub.createTRecord(fn, ln, address, ph, spec, loc, id);
 		}
 	}
-	
-	public static void connect_student(String managerID,String fn,String ln,String[] courses,Integer status,String statusDate,String id) throws RemoteException, NotBoundException{
-		if(managerID.substring(0, 3).equals("MTL")){
+
+	public static void connect_student(String managerID, String fn, String ln, String[] courses, Integer status,
+			String statusDate, String id) throws RemoteException, NotBoundException {
+		if (managerID.substring(0, 3).equals("MTL")) {
 			registry = LocateRegistry.getRegistry(2964);
 			Center stub = (Center) registry.lookup("MTLServer");
-			stub.createSRecord(fn,ln,courses,status,statusDate,id);
-		}
-		else if(managerID.substring(0, 3).equals("LVL")){
+			stub.createSRecord(fn, ln, courses, status, statusDate, id);
+		} else if (managerID.substring(0, 3).equals("LVL")) {
 			registry = LocateRegistry.getRegistry(1212);
 			Center stub = (Center) registry.lookup("LVLServer");
-			stub.createSRecord(fn,ln,courses,status,statusDate,id);
-		}
-		else
-		{
+			stub.createSRecord(fn, ln, courses, status, statusDate, id);
+		} else {
 			registry = LocateRegistry.getRegistry(1111);
 			Center stub = (Center) registry.lookup("DDOServer");
-			stub.createSRecord(fn,ln,courses,status,statusDate,id);
+			stub.createSRecord(fn, ln, courses, status, statusDate, id);
 		}
 	}
-	
-	public static void connect_edit(String managerID,String fieldname,String[] newvalue,String id) throws RemoteException, NotBoundException{
-		if(managerID.substring(0, 3).equals("MTL")){
+
+	public static void connect_edit(String managerID, String fieldname, String[] newvalue, String id)
+			throws RemoteException, NotBoundException {
+		if (managerID.substring(0, 3).equals("MTL")) {
 			registry = LocateRegistry.getRegistry(2964);
 			Center stub = (Center) registry.lookup("MTLServer");
 			stub.editRecord(id, fieldname, newvalue);
-			System.out.println(newvalue[0]);
-		}
-		else if(managerID.substring(0, 3).equals("LVL")){
+		} else if (managerID.substring(0, 3).equals("LVL")) {
 			registry = LocateRegistry.getRegistry(1212);
 			Center stub = (Center) registry.lookup("LVLServer");
 			stub.editRecord(id, fieldname, newvalue);
-		}
-		else
-		{
+		} else {
 			registry = LocateRegistry.getRegistry(1111);
 			Center stub = (Center) registry.lookup("DDOServer");
 			stub.editRecord(id, fieldname, newvalue);
 		}
 	}
-	
+
+	public static boolean validate_edit(String id, String fieldName, String[] newValue) {
+		if (id.length() == 7 && id.substring(0, 2).equals("TR")) {
+			if (fieldName.equals("address") || fieldName.equals("location") || fieldName.equals("phone")) {
+				return true;
+			} else {
+				System.out.println("Invalid Field");
+				return false;
+			}
+		} else if (id.length() == 7 && id.substring(0, 2).equals("SR")) {
+			if (fieldName.equals("coursesRegistered") || fieldName.equals("status")
+					|| fieldName.equals("statusDueDate")) {
+				return true;
+			} else {
+				System.out.println("Invalid Field");
+				return false;
+			}
+		} else {
+			System.out.println("Please enter valid record ID");
+			return false;
+		}
+	}
+
 	public static void main(String[] args) throws IOException, NotBoundException {
 
 		ManagerClient managerClient = new ManagerClient();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("Enter the Manager ID : ");
 		String managerID = reader.readLine();
-		
+
 		if (managerClient.managerIdentification(managerClient, managerID)) {
-			
+
 			do {
 
 				System.out.println("\n 1. Create Teacher ");
@@ -213,76 +216,81 @@ public class ManagerClient {
 				reader = new BufferedReader(new InputStreamReader(System.in));
 				System.out.println("\n Enter your choice : ");
 
-				Scanner s=new Scanner(System.in);
+				Scanner s = new Scanner(System.in);
 				Integer status;
-				String firstName,lastName,address,phone,spec,loc,id,statusDate,fieldName,temp;
-				String DATE_PATTERN ="(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((19|20)\\d\\d)";
+				Boolean result = false;
+				String firstName, lastName, address, phone, spec, loc, id, statusDate, fieldName, temp;
+				String DATE_PATTERN = "(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((19|20)\\d\\d)";
 				String[] courses;
-				String[] newValue=new String[5];
+				String[] newValue = new String[5];
 				Pattern pattern;
 				Matcher matcher;
-				
+
 				switch (reader.readLine()) {
 				case "1":
 					System.out.println("Enter Teacher Information");
 					System.out.println("First Name : ");
-					firstName=s.nextLine();
+					firstName = s.nextLine();
 					System.out.println("Last Name : ");
-					lastName=s.nextLine();
+					lastName = s.nextLine();
 					System.out.println("Address : ");
-					address=s.nextLine();
+					address = s.nextLine();
 					System.out.println("Phone : ");
-					phone=s.nextLine();
+					phone = s.nextLine();
 					System.out.println("Specialization : ");
-					spec=s.nextLine();
+					spec = s.nextLine();
 					System.out.println("Location : ");
-					loc=s.nextLine();
-					System.out.println("Id : ");
-					id=s.nextLine();
-					connect_teacher(managerID,firstName,lastName,address,phone,spec,loc,id);
+					loc = s.nextLine();
+					System.out.println("Id : (e.g.TR00001)");
+					id = s.nextLine();
+					if (id.substring(0, 2).equals("TR") && id.length() == 7) {
+						connect_teacher(managerID, firstName, lastName, address, phone, spec, loc, id);
+					} else {
+						System.out.println("Enter valid ID");
+					}
 					break;
 				case "2":
 					System.out.println("Enter Student Information");
 					System.out.println("First Name : ");
-					firstName=s.nextLine();
+					firstName = s.nextLine();
 					System.out.println("Last Name : ");
-					lastName=s.nextLine();
+					lastName = s.nextLine();
 					System.out.println("Courses registered (separated with comma) : ");
-					temp=s.nextLine();
-					courses=temp.split(",");
+					temp = s.nextLine();
+					courses = temp.split(",");
 					System.out.println("Status : (1 for active & 0 for deactive)");
-					status=s.nextInt();
+					status = s.nextInt();
 					s.nextLine();
 					System.out.println("Status Date : (DD/MM/YYYY)");
-					statusDate=s.nextLine();
+					statusDate = s.nextLine();
 					System.out.println("Id : ");
-					id=s.nextLine();
-					pattern=Pattern.compile(DATE_PATTERN);
-					matcher=pattern.matcher(statusDate);
-					if(matcher.matches()&&(status.equals(0)||status.equals(1))){
-						connect_student(managerID,firstName,lastName,courses,status,statusDate,id);
-					}
-					else
-						System.out.println("check if you have entered correct status or date");
+					id = s.nextLine();
+					pattern = Pattern.compile(DATE_PATTERN);
+					matcher = pattern.matcher(statusDate);
+					if (matcher.matches() && (status.equals(0) || status.equals(1)) && id.substring(0, 2).equals("SR")
+							&& id.length() == 7) {
+						connect_student(managerID, firstName, lastName, courses, status, statusDate, id);
+					} else
+						System.out.println("check if you have entered correct status or date or ID");
 					break;
 				case "3":
 					System.out.println("3");
 					break;
 				case "4":
 					System.out.println("Enter information to edit : ");
-					System.out.println("ID : ");
-					id=s.nextLine();
+					System.out.println("ID : (e.g. TR00001/SR00001)");
+					id = s.nextLine();
 					System.out.println("Field Name : ");
-					fieldName=s.nextLine();
+					fieldName = s.nextLine();
 					System.out.println("New Value : ");
-					temp=s.nextLine();
-					if(temp.contains(","))
-					{
-						newValue=temp.split(",");					
+					temp = s.nextLine();
+					if (temp.contains(",")) {
+						newValue = temp.split(",");
+					} else
+						newValue[0] = temp;		
+					if (validate_edit(id, fieldName, newValue)) {
+						connect_edit(managerID, fieldName, newValue, id);
 					}
-					else
-						newValue[0]=temp;
-					connect_edit(managerID, fieldName, newValue, id);
 					break;
 				case "5":
 					System.out.println("Bye Bye!!!");
@@ -292,11 +300,10 @@ public class ManagerClient {
 					System.out.println("Invalid selection. Please select from given options.");
 					break;
 				}
-				
+
 			} while (!reader.readLine().equals("5"));
 		}
-		
+
 	}
 
-	
 }
