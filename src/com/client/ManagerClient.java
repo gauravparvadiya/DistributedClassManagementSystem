@@ -14,6 +14,8 @@ import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -152,12 +154,11 @@ public class ManagerClient {
 		}
 	}
 	
-	public static void connect_student(String managerID,String fn,String ln,String[] courses,String status,String statusDate,String id) throws RemoteException, NotBoundException{
+	public static void connect_student(String managerID,String fn,String ln,String[] courses,Integer status,String statusDate,String id) throws RemoteException, NotBoundException{
 		if(managerID.substring(0, 3).equals("MTL")){
 			registry = LocateRegistry.getRegistry(2964);
 			Center stub = (Center) registry.lookup("MTLServer");
 			stub.createSRecord(fn,ln,courses,status,statusDate,id);
-			System.out.println(courses.length);
 		}
 		else if(managerID.substring(0, 3).equals("LVL")){
 			registry = LocateRegistry.getRegistry(1212);
@@ -172,13 +173,32 @@ public class ManagerClient {
 		}
 	}
 	
+	public static void connect_edit(String managerID,String fieldname,String[] newvalue,String id) throws RemoteException, NotBoundException{
+		if(managerID.substring(0, 3).equals("MTL")){
+			registry = LocateRegistry.getRegistry(2964);
+			Center stub = (Center) registry.lookup("MTLServer");
+			stub.editRecord(id, fieldname, newvalue);
+			System.out.println(newvalue[0]);
+		}
+		else if(managerID.substring(0, 3).equals("LVL")){
+			registry = LocateRegistry.getRegistry(1212);
+			Center stub = (Center) registry.lookup("LVLServer");
+			stub.editRecord(id, fieldname, newvalue);
+		}
+		else
+		{
+			registry = LocateRegistry.getRegistry(1111);
+			Center stub = (Center) registry.lookup("DDOServer");
+			stub.editRecord(id, fieldname, newvalue);
+		}
+	}
+	
 	public static void main(String[] args) throws IOException, NotBoundException {
 
 		ManagerClient managerClient = new ManagerClient();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("Enter the Manager ID : ");
 		String managerID = reader.readLine();
-		
 		
 		if (managerClient.managerIdentification(managerClient, managerID)) {
 			
@@ -194,8 +214,13 @@ public class ManagerClient {
 				System.out.println("\n Enter your choice : ");
 
 				Scanner s=new Scanner(System.in);
-				String firstName,lastName,address,phone,spec,loc,id,status,statusDate;
+				Integer status;
+				String firstName,lastName,address,phone,spec,loc,id,statusDate,fieldName,temp;
+				String DATE_PATTERN ="(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((19|20)\\d\\d)";
 				String[] courses;
+				String[] newValue=new String[5];
+				Pattern pattern;
+				Matcher matcher;
 				
 				switch (reader.readLine()) {
 				case "1":
@@ -223,22 +248,41 @@ public class ManagerClient {
 					System.out.println("Last Name : ");
 					lastName=s.nextLine();
 					System.out.println("Courses registered (separated with comma) : ");
-					String temp=s.nextLine();
+					temp=s.nextLine();
 					courses=temp.split(",");
-					System.out.println("Status : ");
-					status=s.nextLine();
-					System.out.println("Status Date : ");
+					System.out.println("Status : (1 for active & 0 for deactive)");
+					status=s.nextInt();
+					s.nextLine();
+					System.out.println("Status Date : (DD/MM/YYYY)");
 					statusDate=s.nextLine();
 					System.out.println("Id : ");
 					id=s.nextLine();
-					connect_student(managerID,firstName,lastName,courses,status,statusDate,id);
+					pattern=Pattern.compile(DATE_PATTERN);
+					matcher=pattern.matcher(statusDate);
+					if(matcher.matches()&&(status.equals(0)||status.equals(1))){
+						connect_student(managerID,firstName,lastName,courses,status,statusDate,id);
+					}
+					else
+						System.out.println("check if you have entered correct status or date");
 					break;
 				case "3":
 					System.out.println("3");
 					break;
 				case "4":
-					System.out.println("Enter ID you want to edit");
+					System.out.println("Enter information to edit : ");
+					System.out.println("ID : ");
 					id=s.nextLine();
+					System.out.println("Field Name : ");
+					fieldName=s.nextLine();
+					System.out.println("New Value : ");
+					temp=s.nextLine();
+					if(temp.contains(","))
+					{
+						newValue=temp.split(",");					
+					}
+					else
+						newValue[0]=temp;
+					connect_edit(managerID, fieldName, newValue, id);
 					break;
 				case "5":
 					System.out.println("Bye Bye!!!");

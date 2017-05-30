@@ -20,7 +20,7 @@ public class CenterInmplementation extends UnicastRemoteObject implements Center
 	}
 
 	@Override
-	public void createSRecord(String firstName, String lastName, String[] courseRegistered, String status,
+	public void createSRecord(String firstName, String lastName, String[] courseRegistered, Integer status,
 			String statusDate,String id) throws RemoteException {
 		System.out.println("create student");
 	}
