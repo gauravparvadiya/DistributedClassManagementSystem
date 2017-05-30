@@ -72,7 +72,7 @@ public class CenterServerDDO {
 			//System.out.println(array);
 			
 			if (array != null) {
-				for (int i = 0; i < 4; i++) {
+				for (int i = 7; i < 10; i++) {
 					JsonObject object = (JsonObject) array.get(i);
 					//System.out.println("\n" + object.get("id").getAsString());
 					JsonArray courseList = object.get("coursesRegistered").getAsJsonArray();
@@ -90,7 +90,7 @@ public class CenterServerDDO {
 			//System.out.println(array);
 			
 			if (array != null) {
-				for (int i = 0; i < 4; i++) {
+				for (int i = 7; i < 10; i++) {
 					JsonObject object = (JsonObject) array.get(i);
 					//System.out.println("\n" + object.get("id").getAsString());
 					Teacher t = new Teacher(object.get("fname").getAsString(), object.get("lname").getAsString(), object.get("address").getAsString(), object.get("phone").getAsString(), object.get("specialization").getAsString(), object.get("location").getAsString(), object.get("id").getAsString());

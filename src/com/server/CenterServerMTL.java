@@ -21,21 +21,21 @@ import jdk.nashorn.internal.parser.JSONParser;
 
 public class CenterServerMTL extends CenterInmplementation {
 
-	public final HashMap<String, ArrayList<Object>> srtrRecords = new HashMap<String, ArrayList<Object>>() ;
-	public ArrayList<Object> srtrMTL,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z;
+	public final HashMap<String, ArrayList<Object>> srtrRecords = new HashMap<String, ArrayList<Object>>();
+	public ArrayList<Object> srtrMTL, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
 	JSONParser parser;
-	
-	protected CenterServerMTL() throws Exception {
+
+	public CenterServerMTL() throws Exception {
 		super();
 		addDefaultRecords();
 	}
-	
-	private void addDefaultRecords () {
+
+	private void addDefaultRecords() {
 		File student = new File("res/student.json");
 		File teacher = new File("res/teacher.json");
 		Reader reader;
 		try {
-			
+
 			srtrMTL = new ArrayList<Object>();
 			a = new ArrayList<Object>();
 			b = new ArrayList<Object>();
@@ -63,56 +63,62 @@ public class CenterServerMTL extends CenterInmplementation {
 			x = new ArrayList<Object>();
 			y = new ArrayList<Object>();
 			z = new ArrayList<Object>();
-			
-			//srtrRecords = new HashMap<String, ArrayList<Object>>();
-			
+
+			// srtrRecords = new HashMap<String, ArrayList<Object>>();
+
 			reader = new BufferedReader(new FileReader(student.getAbsolutePath()));
 			JsonParser parser = new JsonParser();
 			JsonArray array = parser.parse(reader).getAsJsonArray();
-			//System.out.println(array);
-			
+			// System.out.println(array);
+
 			if (array != null) {
 				for (int i = 0; i < 4; i++) {
 					JsonObject object = (JsonObject) array.get(i);
-					//System.out.println("\n" + object.get("id").getAsString());
+					// System.out.println("\n" +
+					// object.get("id").getAsString());
 					JsonArray courseList = object.get("coursesRegistered").getAsJsonArray();
 					String[] coursesRegistered = new String[courseList.size()];
-					for (int j = 0; j < courseList.size(); j++) {	
+					for (int j = 0; j < courseList.size(); j++) {
 						coursesRegistered[j] = courseList.get(j).getAsString();
 					}
-					Student s = new Student(object.get("fname").getAsString(), object.get("lname").getAsString(), coursesRegistered, object.get("status").getAsString(), object.get("statusDueDate").getAsString(), object.get("id").getAsString());
+					Student s = new Student(object.get("fname").getAsString(), object.get("lname").getAsString(),
+							coursesRegistered, object.get("status").getAsString(),
+							object.get("statusDueDate").getAsString(), object.get("id").getAsString());
 					srtrMTL.add(s);
 				}
 			}
-			
+
 			reader = new BufferedReader(new FileReader(teacher.getAbsolutePath()));
 			array = parser.parse(reader).getAsJsonArray();
-			//System.out.println(array);
-			
+			// System.out.println(array);
+
 			if (array != null) {
 				for (int i = 0; i < 4; i++) {
 					JsonObject object = (JsonObject) array.get(i);
-					//System.out.println("\n" + object.get("id").getAsString());
-					Teacher t = new Teacher(object.get("fname").getAsString(), object.get("lname").getAsString(), object.get("address").getAsString(), object.get("phone").getAsString(), object.get("specialization").getAsString(), object.get("location").getAsString(), object.get("id").getAsString());
+					// System.out.println("\n" +
+					// object.get("id").getAsString());
+					Teacher t = new Teacher(object.get("fname").getAsString(), object.get("lname").getAsString(),
+							object.get("address").getAsString(), object.get("phone").getAsString(),
+							object.get("specialization").getAsString(), object.get("location").getAsString(),
+							object.get("id").getAsString());
 					srtrMTL.add(t);
 				}
 			}
-			
+
 			for (int ij = 0; ij < srtrMTL.size(); ij++) {
 				Student stud;
 				Teacher teach;
 				Character ch;
-				if(srtrMTL.get(ij) instanceof Student){
+				if (srtrMTL.get(ij) instanceof Student) {
 					stud = (Student) srtrMTL.get(ij);
-					//System.out.println(stud.getLname());
+					// System.out.println(stud.getLname());
 					ch = stud.getLname().toUpperCase().charAt(0);
-					//System.out.println(ch);
-				}
-				else {
+					// System.out.println(ch);
+				} else {
 					teach = (Teacher) srtrMTL.get(ij);
-					//System.out.println(teach.getLname());
+					// System.out.println(teach.getLname());
 					ch = teach.getLname().toUpperCase().charAt(0);
-					//System.out.println(ch);
+					// System.out.println(ch);
 				}
 				switch (ch) {
 				case 'A':
@@ -195,9 +201,9 @@ public class CenterServerMTL extends CenterInmplementation {
 					break;
 				default:
 					break;
-				}		
+				}
 			}
-			
+
 			srtrRecords.put("A", a);
 			srtrRecords.put("B", b);
 			srtrRecords.put("C", c);
@@ -224,25 +230,24 @@ public class CenterServerMTL extends CenterInmplementation {
 			srtrRecords.put("X", x);
 			srtrRecords.put("Y", y);
 			srtrRecords.put("Z", z);
-			
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public HashMap<String, ArrayList<Object>> getMtlMap() {
 		return srtrRecords;
 	}
-	
+
 	public static void main(String[] args) throws Exception {
-		
+
 		CenterServerMTL mtl = new CenterServerMTL();
+		mtl.addDefaultRecords();
 		CenterInmplementation stub = new CenterInmplementation();
 		Registry registry = LocateRegistry.createRegistry(2964);
 		registry.bind("MTLServer", stub);
 		System.out.println("Server started.");
 	}
 
-	
-	
 }

@@ -20,22 +20,22 @@ import com.users.Teacher;
 import jdk.nashorn.internal.parser.JSONParser;
 
 public class CenterServerLVL {
-	
-	public final HashMap<String, ArrayList<Object>> srtrRecords = new HashMap<String, ArrayList<Object>>() ;
-	public ArrayList<Object> srtrLvl,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z;
+
+	public final HashMap<String, ArrayList<Object>> srtrRecords = new HashMap<String, ArrayList<Object>>();
+	public ArrayList<Object> srtrLvl, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
 	JSONParser parser;
-	
+
 	protected CenterServerLVL() throws Exception {
 		super();
 		addDefaultRecords();
 	}
 
-	private void addDefaultRecords () {
+	private void addDefaultRecords() {
 		File student = new File("res/student.json");
 		File teacher = new File("res/teacher.json");
 		Reader reader;
 		try {
-			
+
 			srtrLvl = new ArrayList<Object>();
 			a = new ArrayList<Object>();
 			b = new ArrayList<Object>();
@@ -63,52 +63,58 @@ public class CenterServerLVL {
 			x = new ArrayList<Object>();
 			y = new ArrayList<Object>();
 			z = new ArrayList<Object>();
-			
-			//srtrRecords = new HashMap<String, ArrayList<Object>>();
-			
+
+			// srtrRecords = new HashMap<String, ArrayList<Object>>();
+
 			reader = new BufferedReader(new FileReader(student.getAbsolutePath()));
 			JsonParser parser = new JsonParser();
 			JsonArray array = parser.parse(reader).getAsJsonArray();
-			//System.out.println(array);
-			
+			// System.out.println(array);
+
 			if (array != null) {
 				for (int i = 4; i < 7; i++) {
 					JsonObject object = (JsonObject) array.get(i);
-					//System.out.println("\n" + object.get("id").getAsString());
+					// System.out.println("\n" +
+					// object.get("id").getAsString());
 					JsonArray courseList = object.get("coursesRegistered").getAsJsonArray();
 					String[] coursesRegistered = new String[courseList.size()];
-					for (int j = 0; j < courseList.size(); j++) {	
+					for (int j = 0; j < courseList.size(); j++) {
 						coursesRegistered[j] = courseList.get(j).getAsString();
 					}
-					Student s = new Student(object.get("fname").getAsString(), object.get("lname").getAsString(), coursesRegistered, object.get("status").getAsString(), object.get("statusDueDate").getAsString(), object.get("id").getAsString());
+					Student s = new Student(object.get("fname").getAsString(), object.get("lname").getAsString(),
+							coursesRegistered, object.get("status").getAsString(),
+							object.get("statusDueDate").getAsString(), object.get("id").getAsString());
 					srtrLvl.add(s);
 				}
 			}
-			
+
 			reader = new BufferedReader(new FileReader(teacher.getAbsolutePath()));
 			array = parser.parse(reader).getAsJsonArray();
-			//System.out.println(array);
-			
+			// System.out.println(array);
+
 			if (array != null) {
 				for (int i = 4; i < 7; i++) {
 					JsonObject object = (JsonObject) array.get(i);
-					//System.out.println("\n" + object.get("id").getAsString());
-					Teacher t = new Teacher(object.get("fname").getAsString(), object.get("lname").getAsString(), object.get("address").getAsString(), object.get("phone").getAsString(), object.get("specialization").getAsString(), object.get("location").getAsString(), object.get("id").getAsString());
+					// System.out.println("\n" +
+					// object.get("id").getAsString());
+					Teacher t = new Teacher(object.get("fname").getAsString(), object.get("lname").getAsString(),
+							object.get("address").getAsString(), object.get("phone").getAsString(),
+							object.get("specialization").getAsString(), object.get("location").getAsString(),
+							object.get("id").getAsString());
 					srtrLvl.add(t);
 				}
 			}
-			
+
 			for (int ij = 0; ij < srtrLvl.size(); ij++) {
 				Student stud;
 				Teacher teach;
 				Character ch;
-				if(srtrLvl.get(ij) instanceof Student){
+				if (srtrLvl.get(ij) instanceof Student) {
 					stud = (Student) srtrLvl.get(ij);
 					System.out.println(stud.getLname());
 					ch = stud.getLname().toUpperCase().charAt(0);
 					System.out.println(ch);
-				}
-				else {
+				} else {
 					teach = (Teacher) srtrLvl.get(ij);
 					System.out.println(teach.getLname());
 					ch = teach.getLname().toUpperCase().charAt(0);
@@ -195,9 +201,9 @@ public class CenterServerLVL {
 					break;
 				default:
 					break;
-				}		
+				}
 			}
-			
+
 			srtrRecords.put("A", a);
 			srtrRecords.put("B", b);
 			srtrRecords.put("C", c);
@@ -224,20 +230,20 @@ public class CenterServerLVL {
 			srtrRecords.put("X", x);
 			srtrRecords.put("Y", y);
 			srtrRecords.put("Z", z);
-			
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public HashMap<String, ArrayList<Object>> getLvlMap() {
 		return srtrRecords;
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		CenterServerLVL lvl = new CenterServerLVL();
-		CenterInmplementation stub=new CenterInmplementation();
-		Registry registry=LocateRegistry.createRegistry(1212);
+		CenterInmplementation stub = new CenterInmplementation();
+		Registry registry = LocateRegistry.createRegistry(1212);
 		registry.bind("LVLServer", stub);
 		System.out.println("Server started.");
 	}

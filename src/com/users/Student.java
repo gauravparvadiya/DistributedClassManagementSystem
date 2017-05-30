@@ -9,6 +9,15 @@ public class Student {
 	private String statusDueDate;
 	private String id;
 	
+	
+	
+	/**
+	 * 
+	 */
+	public Student() {
+		super();
+	}
+
 	/**
 	 * 
 	 * @param fname
