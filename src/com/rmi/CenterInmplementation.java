@@ -3,8 +3,12 @@ package com.rmi;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-public class CenterInmplementation extends UnicastRemoteObject implements Center {
+import com.server.CenterServerMTL;
+import com.users.Student;
+import com.users.Teacher;
 
+public class CenterInmplementation extends UnicastRemoteObject implements Center {
+	
 	public CenterInmplementation() throws Exception {
 		super();
 	}

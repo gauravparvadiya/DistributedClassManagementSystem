@@ -104,15 +104,15 @@ public class CenterServerMTL extends CenterInmplementation {
 				Character ch;
 				if(srtrMTL.get(ij) instanceof Student){
 					stud = (Student) srtrMTL.get(ij);
-					System.out.println(stud.getLname());
+					//System.out.println(stud.getLname());
 					ch = stud.getLname().toUpperCase().charAt(0);
-					System.out.println(ch);
+					//System.out.println(ch);
 				}
 				else {
 					teach = (Teacher) srtrMTL.get(ij);
-					System.out.println(teach.getLname());
+					//System.out.println(teach.getLname());
 					ch = teach.getLname().toUpperCase().charAt(0);
-					System.out.println(ch);
+					//System.out.println(ch);
 				}
 				switch (ch) {
 				case 'A':

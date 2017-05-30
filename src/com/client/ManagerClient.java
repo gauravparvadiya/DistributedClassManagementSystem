@@ -237,7 +237,8 @@ public class ManagerClient {
 					System.out.println("3");
 					break;
 				case "4":
-					System.out.println("4");
+					System.out.println("Enter ID you want to edit");
+					id=s.nextLine();
 					break;
 				case "5":
 					System.out.println("Bye Bye!!!");
