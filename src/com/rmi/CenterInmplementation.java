@@ -40,8 +40,7 @@ public class CenterInmplementation extends UnicastRemoteObject implements Center
 	@Override
 	public void createTRecord(String firstName, String lastName, String address, String phone, String specialization,
 			String location,String id) throws RemoteException {
-		System.out.println("create teacher");
-		
+		System.out.println("create teacher");		
 	}
 	
 	@Override
@@ -55,11 +54,8 @@ public class CenterInmplementation extends UnicastRemoteObject implements Center
 			} else {
 				System.out.println("Student id already available.");
 			}
-			
-//			System.out.println(centerServerMTL.getMtlMap());
-			
+						
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
