@@ -11,6 +11,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.ServerNotActiveException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -123,7 +124,7 @@ public class ManagerClient implements Runnable {
 	}
 
 	public static void connect_teacher(String managerID, String fn, String ln, String address, String ph, String spec,
-			String loc, String id) throws RemoteException, NotBoundException {
+			String loc, String id) throws RemoteException, NotBoundException, ServerNotActiveException {
 		if (managerID.substring(0, 3).equals("MTL")) {
 			registry = LocateRegistry.getRegistry(2964);
 			Center stub = (Center) registry.lookup("MTLServer");
@@ -174,14 +175,14 @@ public class ManagerClient implements Runnable {
 	}
 
 	public static boolean validate_edit(String id, String fieldName, String[] newValue) {
-		if (id.length() == 8 && id.substring(1, 3).equals("TR")) {
+		if (id.length() == 7 && id.substring(0, 2).equals("TR")) {
 			if (fieldName.equals("address") || fieldName.equals("location") || fieldName.equals("phone")) {
 				return true;
 			} else {
 				System.out.println("Invalid Field");
 				return false;
 			}
-		} else if (id.length() == 8 && id.substring(1, 3).equals("SR")) {
+		} else if (id.length() == 7 && id.substring(0, 2).equals("SR")) {
 			if (fieldName.equals("coursesRegistered") || fieldName.equals("status")
 					|| fieldName.equals("statusDueDate")) {
 				return true;
@@ -195,7 +196,7 @@ public class ManagerClient implements Runnable {
 		}
 	}
 
-	public static void main(String[] args) throws IOException, NotBoundException {
+	public static void main(String[] args) throws IOException, NotBoundException, ServerNotActiveException {
 
 		ManagerClient managerClient = new ManagerClient();
 		Thread t = new Thread(managerClient);
@@ -245,7 +246,7 @@ public class ManagerClient implements Runnable {
 					loc = s.nextLine();
 					System.out.println("Id : (e.g.TR00001)");
 					id = s.nextLine();
-					if (id.length() == 7&&id.substring(0, 2).equals("TR") ) {
+					if (id.length() == 7 && id.substring(0, 2).equals("TR") ) {
 						connect_teacher(managerID, firstName, lastName, address, phone, spec, loc, id);
 					} else {
 						System.out.println("Enter valid ID");

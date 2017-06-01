@@ -1,25 +1,23 @@
 package com.rmi;
 
 import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
+import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.server.CenterServerMTL;
-import com.users.Student;
-import com.users.Teacher;
 
 public class CenterInmplementation extends UnicastRemoteObject implements Center {
-	
-	
+		
 	public CenterInmplementation() throws Exception {
 		super();
 	}
 	
 	@Override
 	public void createTRecord(String firstName, String lastName, String address, String phone, String specialization,
-			String location) throws RemoteException {
-		System.out.println("create teacher");		
+			String location) throws RemoteException, ServerNotActiveException {
+		System.out.println("create teacher");
+		
 	}
 	
 	@Override

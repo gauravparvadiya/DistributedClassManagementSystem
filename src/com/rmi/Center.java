@@ -2,6 +2,7 @@ package com.rmi;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.server.ServerNotActiveException;
 
 public interface Center extends Remote{
 	/**
@@ -14,7 +15,7 @@ public interface Center extends Remote{
 	 * @param location
 	 * @throws RemoteException
 	 */
-	public void createTRecord(String firstName,String lastName,String address,String phone,String specialization,String location) throws RemoteException;
+	public void createTRecord(String firstName,String lastName,String address,String phone,String specialization,String location) throws RemoteException, ServerNotActiveException;
 	
 	/**
 	 * method to create new Student Record
