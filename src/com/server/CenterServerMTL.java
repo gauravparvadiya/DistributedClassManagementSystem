@@ -27,7 +27,7 @@ public class CenterServerMTL extends CenterInmplementation {
 
 	public CenterServerMTL() throws Exception {
 		super();
-		addDefaultRecords();
+		//addDefaultRecords();
 	}
 
 	private void addDefaultRecords() {
@@ -94,7 +94,7 @@ public class CenterServerMTL extends CenterInmplementation {
 							object.get("specialization").getAsString(), object.get("location").getAsString(),
 							object.get("id").getAsString());
 					srtrMTL.add(t);
-				}
+				} 
 			}
 
 			for (int ij = 0; ij < srtrMTL.size(); ij++) {

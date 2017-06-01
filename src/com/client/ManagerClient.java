@@ -21,12 +21,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.rmi.Center;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.users.Manager;
 
 import jdk.nashorn.internal.parser.JSONParser;
 
-public class ManagerClient {
+public class ManagerClient implements Runnable {
 
 	public HashMap<String, ArrayList<Manager>> managerHashMap;
 	public ArrayList<Manager> mtl, lvl, ddo;
@@ -199,6 +198,9 @@ public class ManagerClient {
 	public static void main(String[] args) throws IOException, NotBoundException {
 
 		ManagerClient managerClient = new ManagerClient();
+		Thread t = new Thread(managerClient);
+		t.start();
+		
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("Enter the Manager ID : ");
 		String managerID = reader.readLine();
@@ -304,6 +306,11 @@ public class ManagerClient {
 			} while (!reader.readLine().equals("5"));
 		}
 
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
 	}
 
 }
