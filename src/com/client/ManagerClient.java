@@ -174,14 +174,14 @@ public class ManagerClient implements Runnable {
 	}
 
 	public static boolean validate_edit(String id, String fieldName, String[] newValue) {
-		if (id.length() == 7 && id.substring(0, 2).equals("TR")) {
+		if (id.length() == 8 && id.substring(1, 3).equals("TR")) {
 			if (fieldName.equals("address") || fieldName.equals("location") || fieldName.equals("phone")) {
 				return true;
 			} else {
 				System.out.println("Invalid Field");
 				return false;
 			}
-		} else if (id.length() == 7 && id.substring(0, 2).equals("SR")) {
+		} else if (id.length() == 8 && id.substring(1, 3).equals("SR")) {
 			if (fieldName.equals("coursesRegistered") || fieldName.equals("status")
 					|| fieldName.equals("statusDueDate")) {
 				return true;
