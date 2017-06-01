@@ -127,15 +127,15 @@ public class ManagerClient implements Runnable {
 		if (managerID.substring(0, 3).equals("MTL")) {
 			registry = LocateRegistry.getRegistry(2964);
 			Center stub = (Center) registry.lookup("MTLServer");
-			stub.createTRecord(fn, ln, address, ph, spec, loc, id);
+			stub.createTRecord(fn, ln, address, ph, spec, loc);
 		} else if (managerID.substring(0, 3).equals("LVL")) {
 			registry = LocateRegistry.getRegistry(1212);
 			Center stub = (Center) registry.lookup("LVLServer");
-			stub.createTRecord(fn, ln, address, ph, spec, loc, id);
+			stub.createTRecord(fn, ln, address, ph, spec, loc);
 		} else {
 			registry = LocateRegistry.getRegistry(1111);
 			Center stub = (Center) registry.lookup("DDOServer");
-			stub.createTRecord(fn, ln, address, ph, spec, loc, id);
+			stub.createTRecord(fn, ln, address, ph, spec, loc);
 		}
 	}
 
@@ -144,15 +144,15 @@ public class ManagerClient implements Runnable {
 		if (managerID.substring(0, 3).equals("MTL")) {
 			registry = LocateRegistry.getRegistry(2964);
 			Center stub = (Center) registry.lookup("MTLServer");
-			stub.createSRecord(fn, ln, courses, status, statusDate, id);
+			stub.createSRecord(fn, ln, courses, status, statusDate);
 		} else if (managerID.substring(0, 3).equals("LVL")) {
 			registry = LocateRegistry.getRegistry(1212);
 			Center stub = (Center) registry.lookup("LVLServer");
-			stub.createSRecord(fn, ln, courses, status, statusDate, id);
+			stub.createSRecord(fn, ln, courses, status, statusDate);
 		} else {
 			registry = LocateRegistry.getRegistry(1111);
 			Center stub = (Center) registry.lookup("DDOServer");
-			stub.createSRecord(fn, ln, courses, status, statusDate, id);
+			stub.createSRecord(fn, ln, courses, status, statusDate);
 		}
 	}
 
