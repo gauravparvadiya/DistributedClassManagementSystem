@@ -245,7 +245,7 @@ public class ManagerClient implements Runnable {
 					loc = s.nextLine();
 					System.out.println("Id : (e.g.TR00001)");
 					id = s.nextLine();
-					if (id.substring(0, 2).equals("TR") && id.length() == 7) {
+					if (id.length() == 7&&id.substring(0, 2).equals("TR") ) {
 						connect_teacher(managerID, firstName, lastName, address, phone, spec, loc, id);
 					} else {
 						System.out.println("Enter valid ID");
