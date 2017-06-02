@@ -5,240 +5,279 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.rmi.CenterInmplementation;
+import com.rmi.Center;
 import com.users.Student;
 import com.users.Teacher;
 
 import jdk.nashorn.internal.parser.JSONParser;
 
-public class CenterServerDDO {
+public class CenterServerDDO extends UnicastRemoteObject implements Center {
 	
 	public final HashMap<String, ArrayList<Object>> srtrRecords = new HashMap<String, ArrayList<Object>>() ;
 	public ArrayList<Object> srtrDdo,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z;
 	JSONParser parser;
+	String lastSRecordId = new String();
+	String lastTRecordId = new String();
 	
 	protected CenterServerDDO() throws Exception {
 		super();
-		addDefaultRecords();
+		
+		srtrDdo = new ArrayList<Object>();
+		a = new ArrayList<Object>();
+		b = new ArrayList<Object>();
+		c = new ArrayList<Object>();
+		d = new ArrayList<Object>();
+		e = new ArrayList<Object>();
+		f = new ArrayList<Object>();
+		g = new ArrayList<Object>();
+		h = new ArrayList<Object>();
+		i = new ArrayList<Object>();
+		j = new ArrayList<Object>();
+		k = new ArrayList<Object>();
+		l = new ArrayList<Object>();
+		m = new ArrayList<Object>();
+		n = new ArrayList<Object>();
+		o = new ArrayList<Object>();
+		p = new ArrayList<Object>();
+		q = new ArrayList<Object>();
+		r = new ArrayList<Object>();
+		s = new ArrayList<Object>();
+		t = new ArrayList<Object>();
+		u = new ArrayList<Object>();
+		v = new ArrayList<Object>();
+		w = new ArrayList<Object>();
+		x = new ArrayList<Object>();
+		y = new ArrayList<Object>();
+		z = new ArrayList<Object>();
 	}
+	
+	private void addToMap(Object obj) {
 
-	private void addDefaultRecords () {
+		Student stud;
+		Teacher teach;
+		Character ch;
+
+		if (obj instanceof Student) {
+			stud = (Student) obj;
+			ch = stud.getLname().toUpperCase().charAt(0);
+		} else {
+			teach = (Teacher) obj;
+			ch = teach.getLname().toUpperCase().charAt(0);
+		}
+		switch (ch) {
+		case 'A':
+			a.add(obj);
+			break;
+		case 'B':
+			b.add(obj);
+			break;
+		case 'C':
+			c.add(obj);
+			break;
+		case 'D':
+			d.add(obj);
+			break;
+		case 'E':
+			e.add(obj);
+			break;
+		case 'F':
+			f.add(obj);
+			break;
+		case 'G':
+			g.add(obj);
+			break;
+		case 'H':
+			h.add(obj);
+			break;
+		case 'I':
+			i.add(obj);
+			break;
+		case 'J':
+			j.add(obj);
+			break;
+		case 'K':
+			k.add(obj);
+			break;
+		case 'L':
+			l.add(obj);
+			break;
+		case 'M':
+			m.add(obj);
+			break;
+		case 'N':
+			n.add(obj);
+			break;
+		case 'O':
+			o.add(obj);
+			break;
+		case 'P':
+			p.add(obj);
+			break;
+		case 'Q':
+			q.add(obj);
+			break;
+		case 'R':
+			r.add(obj);
+			break;
+		case 'S':
+			s.add(obj);
+			break;
+		case 'T':
+			t.add(obj);
+			break;
+		case 'U':
+			u.add(obj);
+			break;
+		case 'V':
+			v.add(obj);
+			break;
+		case 'W':
+			w.add(obj);
+			break;
+		case 'X':
+			x.add(obj);
+			break;
+		case 'Y':
+			y.add(obj);
+			break;
+		case 'Z':
+			z.add(obj);
+			break;
+		default:
+			break;
+		}
+
+		srtrRecords.put("A", a);
+		srtrRecords.put("B", b);
+		srtrRecords.put("C", c);
+		srtrRecords.put("D", d);
+		srtrRecords.put("E", e);
+		srtrRecords.put("F", f);
+		srtrRecords.put("G", g);
+		srtrRecords.put("H", h);
+		srtrRecords.put("I", i);
+		srtrRecords.put("J", j);
+		srtrRecords.put("K", k);
+		srtrRecords.put("L", l);
+		srtrRecords.put("M", m);
+		srtrRecords.put("N", n);
+		srtrRecords.put("O", o);
+		srtrRecords.put("P", p);
+		srtrRecords.put("Q", q);
+		srtrRecords.put("R", r);
+		srtrRecords.put("S", s);
+		srtrRecords.put("T", t);
+		srtrRecords.put("U", u);
+		srtrRecords.put("V", v);
+		srtrRecords.put("W", w);
+		srtrRecords.put("X", x);
+		srtrRecords.put("Y", y);
+		srtrRecords.put("Z", z);
+	}
+	
+	private void addDefaultRecords() {
 		File student = new File("res/student.json");
 		File teacher = new File("res/teacher.json");
 		Reader reader;
 		try {
 			
-			srtrDdo = new ArrayList<Object>();
-			a = new ArrayList<Object>();
-			b = new ArrayList<Object>();
-			c = new ArrayList<Object>();
-			d = new ArrayList<Object>();
-			e = new ArrayList<Object>();
-			f = new ArrayList<Object>();
-			g = new ArrayList<Object>();
-			h = new ArrayList<Object>();
-			i = new ArrayList<Object>();
-			j = new ArrayList<Object>();
-			k = new ArrayList<Object>();
-			l = new ArrayList<Object>();
-			m = new ArrayList<Object>();
-			n = new ArrayList<Object>();
-			o = new ArrayList<Object>();
-			p = new ArrayList<Object>();
-			q = new ArrayList<Object>();
-			r = new ArrayList<Object>();
-			s = new ArrayList<Object>();
-			t = new ArrayList<Object>();
-			u = new ArrayList<Object>();
-			v = new ArrayList<Object>();
-			w = new ArrayList<Object>();
-			x = new ArrayList<Object>();
-			y = new ArrayList<Object>();
-			z = new ArrayList<Object>();
-			
-			//srtrRecords = new HashMap<String, ArrayList<Object>>();
-			
 			reader = new BufferedReader(new FileReader(student.getAbsolutePath()));
 			JsonParser parser = new JsonParser();
 			JsonArray array = parser.parse(reader).getAsJsonArray();
-			//System.out.println(array);
-			
+
 			if (array != null) {
-				for (int i = 7; i < 10; i++) {
+				for (int i = 4; i < 7; i++) {
 					JsonObject object = (JsonObject) array.get(i);
-					//System.out.println("\n" + object.get("id").getAsString());
 					JsonArray courseList = object.get("coursesRegistered").getAsJsonArray();
 					String[] coursesRegistered = new String[courseList.size()];
-					for (int j = 0; j < courseList.size(); j++) {	
+					for (int j = 0; j < courseList.size(); j++) {
 						coursesRegistered[j] = courseList.get(j).getAsString();
 					}
-					Student s = new Student(object.get("fname").getAsString(), object.get("lname").getAsString(), coursesRegistered, object.get("status").getAsString(), object.get("statusDueDate").getAsString(), object.get("id").getAsString());
+					Student s = new Student(object.get("fname").getAsString(), object.get("lname").getAsString(),
+							coursesRegistered, Integer.parseInt(object.get("status").getAsString()),
+							object.get("statusDueDate").getAsString(), object.get("id").getAsString());
 					srtrDdo.add(s);
+					lastSRecordId = object.get("id").getAsString();
 				}
 			}
-			
+
 			reader = new BufferedReader(new FileReader(teacher.getAbsolutePath()));
 			array = parser.parse(reader).getAsJsonArray();
-			//System.out.println(array);
-			
+
 			if (array != null) {
-				for (int i = 7; i < 10; i++) {
+				for (int i = 4; i < 7; i++) {
 					JsonObject object = (JsonObject) array.get(i);
-					//System.out.println("\n" + object.get("id").getAsString());
-					Teacher t = new Teacher(object.get("fname").getAsString(), object.get("lname").getAsString(), object.get("address").getAsString(), object.get("phone").getAsString(), object.get("specialization").getAsString(), object.get("location").getAsString(), object.get("id").getAsString());
+					Teacher t = new Teacher(object.get("fname").getAsString(), object.get("lname").getAsString(),
+							object.get("address").getAsString(), object.get("phone").getAsString(),
+							object.get("specialization").getAsString(), object.get("location").getAsString(),
+							object.get("id").getAsString());
 					srtrDdo.add(t);
+					lastTRecordId = object.get("id").getAsString();
 				}
 			}
 			
 			for (int ij = 0; ij < srtrDdo.size(); ij++) {
-				Student stud;
-				Teacher teach;
-				Character ch;
-				if(srtrDdo.get(ij) instanceof Student){
-					stud = (Student) srtrDdo.get(ij);
-					System.out.println(stud.getLname());
-					ch = stud.getLname().toUpperCase().charAt(0);
-					System.out.println(ch);
-				}
-				else {
-					teach = (Teacher) srtrDdo.get(ij);
-					System.out.println(teach.getLname());
-					ch = teach.getLname().toUpperCase().charAt(0);
-					System.out.println(ch);
-				}
-				switch (ch) {
-				case 'A':
-					a.add(srtrDdo.get(ij));
-					break;
-				case 'B':
-					b.add(srtrDdo.get(ij));
-					break;
-				case 'C':
-					c.add(srtrDdo.get(ij));
-					break;
-				case 'D':
-					d.add(srtrDdo.get(ij));
-					break;
-				case 'E':
-					e.add(srtrDdo.get(ij));
-					break;
-				case 'F':
-					f.add(srtrDdo.get(ij));
-					break;
-				case 'G':
-					g.add(srtrDdo.get(ij));
-					break;
-				case 'H':
-					h.add(srtrDdo.get(ij));
-					break;
-				case 'I':
-					i.add(srtrDdo.get(ij));
-					break;
-				case 'J':
-					j.add(srtrDdo.get(ij));
-					break;
-				case 'K':
-					k.add(srtrDdo.get(ij));
-					break;
-				case 'L':
-					l.add(srtrDdo.get(ij));
-					break;
-				case 'M':
-					m.add(srtrDdo.get(ij));
-					break;
-				case 'N':
-					n.add(srtrDdo.get(ij));
-					break;
-				case 'O':
-					o.add(srtrDdo.get(ij));
-					break;
-				case 'P':
-					p.add(srtrDdo.get(ij));
-					break;
-				case 'Q':
-					q.add(srtrDdo.get(ij));
-					break;
-				case 'R':
-					r.add(srtrDdo.get(ij));
-					break;
-				case 'S':
-					s.add(srtrDdo.get(ij));
-					break;
-				case 'T':
-					t.add(srtrDdo.get(ij));
-					break;
-				case 'U':
-					u.add(srtrDdo.get(ij));
-					break;
-				case 'V':
-					v.add(srtrDdo.get(ij));
-					break;
-				case 'W':
-					w.add(srtrDdo.get(ij));
-					break;
-				case 'X':
-					x.add(srtrDdo.get(ij));
-					break;
-				case 'Y':
-					y.add(srtrDdo.get(ij));
-					break;
-				case 'Z':
-					z.add(srtrDdo.get(ij));
-					break;
-				default:
-					break;
-				}		
+				addToMap(srtrDdo.get(ij));
 			}
-			
-			srtrRecords.put("A", a);
-			srtrRecords.put("B", b);
-			srtrRecords.put("C", c);
-			srtrRecords.put("D", d);
-			srtrRecords.put("E", e);
-			srtrRecords.put("F", f);
-			srtrRecords.put("G", g);
-			srtrRecords.put("H", h);
-			srtrRecords.put("I", i);
-			srtrRecords.put("J", j);
-			srtrRecords.put("K", k);
-			srtrRecords.put("L", l);
-			srtrRecords.put("M", m);
-			srtrRecords.put("N", n);
-			srtrRecords.put("O", o);
-			srtrRecords.put("P", p);
-			srtrRecords.put("Q", q);
-			srtrRecords.put("R", r);
-			srtrRecords.put("S", s);
-			srtrRecords.put("T", t);
-			srtrRecords.put("U", u);
-			srtrRecords.put("V", v);
-			srtrRecords.put("W", w);
-			srtrRecords.put("X", x);
-			srtrRecords.put("Y", y);
-			srtrRecords.put("Z", z);
-			
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public HashMap<String, ArrayList<Object>> getDdoMap() {
-		return srtrRecords;
+
+	@Override
+	public void createTRecord(String firstName, String lastName, String address, String phone, String specialization,
+			String location) throws RemoteException {
+		// TODO Auto-generated method stub
+		int id = Integer.parseInt(lastTRecordId.substring(3, 8));
+		System.out.println(id);
+		lastTRecordId = "DTR" + "" + ++id;
+		System.out.println(lastTRecordId);
+		Teacher t = new Teacher(firstName, lastName, address, phone, specialization, location, lastTRecordId);
+		//Student s = new Student(firstName, lastName, courseRegistered, status, statusDate, lastSRecordId);
+		addToMap(t);
+		
+	}
+
+	@Override
+	public void createSRecord(String firstName, String lastName, String[] courseRegistered, Integer status,
+			String statusDate) throws RemoteException {
+		// TODO Auto-generated method stub
+		System.out.println(a);
+		int id = Integer.parseInt(lastSRecordId.substring(3, 8));
+		System.out.println(id);
+		lastSRecordId = "DTR" + "" + ++id;
+		System.out.println(lastSRecordId);
+		Student s = new Student(firstName, lastName, courseRegistered, status, statusDate, lastSRecordId);
+		addToMap(s);
+	}
+
+	@Override
+	public String getRecordCounts() throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void editRecord(String recordID, String fieldName, String[] newValue) throws RemoteException {
+		// TODO Auto-generated method stub
+
 	}
 	
 	public static void main(String[] args) throws Exception {
 		CenterServerDDO ddo = new CenterServerDDO();
-		CenterInmplementation stub=new CenterInmplementation();
 		Registry registry=LocateRegistry.createRegistry(1111);
-		registry.bind("DDOServer", stub);
+		registry.bind("DDOServer", ddo);
 		System.out.println("Server started.");
 	}
 }
