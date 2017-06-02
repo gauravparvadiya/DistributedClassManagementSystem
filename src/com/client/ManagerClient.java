@@ -174,25 +174,30 @@ public class ManagerClient implements Runnable {
 	}
 
 	public static boolean validate_edit(String id, String fieldName, String[] newValue) {
-		if (id.length() == 7 && id.substring(0, 2).equals("TR")) {
-			if (fieldName.equals("address") || fieldName.equals("location") || fieldName.equals("phone")) {
-				return true;
+		
+		if (id.length() == 8) {
+			if ( id.substring(0, 3).equals("MTR") || id.substring(0, 3).equals("LTR") || id.substring(0, 3).equals("DTR")) {
+				if (fieldName.equals("address") || fieldName.equals("location") || fieldName.equals("phone")) {
+					return true;
+				} else {
+					System.out.println("Invalid Field");
+					return false;
+				}
+			} else if (id.substring(0, 3).equals("MSR") || id.substring(0, 3).equals("LSR") || id.substring(0, 3).equals("DSR")) {
+				if (fieldName.equals("coursesRegistered") || fieldName.equals("status")
+						|| fieldName.equals("statusDueDate")) {
+					return true;
+				} else {
+					System.out.println("Invalid Field");
+					return false;
+				}
 			} else {
-				System.out.println("Invalid Field");
-				return false;
-			}
-		} else if (id.length() == 7 && id.substring(0, 2).equals("SR")) {
-			if (fieldName.equals("coursesRegistered") || fieldName.equals("status")
-					|| fieldName.equals("statusDueDate")) {
 				return true;
-			} else {
-				System.out.println("Invalid Field");
-				return false;
 			}
 		} else {
 			System.out.println("Please enter valid record ID");
 			return false;
-		}
+		} 
 	}
 
 	public static void main(String[] args) throws IOException, NotBoundException, ServerNotActiveException {

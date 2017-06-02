@@ -266,13 +266,48 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 	@Override
 	public String getRecordCounts() throws RemoteException {
 		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void editRecord(String recordID, String fieldName, String[] newValue) throws RemoteException {
 		// TODO Auto-generated method stub
-
+		if (recordID.substring(0, 3).equals("MSR")) {
+			System.out.println("Edit student");
+			Student s;
+			for (int i = 65; i < 91; i++) {
+				String key = Character.toString((char)i);
+				ArrayList<Object> array = srtrRecords.get(key);
+				for (int j = 0; j < array.size(); j++) {
+					if (array.get(j) instanceof Student) {
+						s = (Student) array.get(j);
+						if (s.getId().equals(recordID)) {
+							System.out.println("Student found");
+						}
+					} 
+				}
+			}
+		} else if(recordID.substring(0, 3).equals("MTR")) {
+			System.out.println("Edit teacher");
+			Teacher t;
+			for (int i = 65; i < 91; i++) {
+				String key = Character.toString((char)i);
+				ArrayList<Object> array = srtrRecords.get(key);
+				for (int j = 0; j < array.size(); j++) {
+					if (array.get(j) instanceof Teacher) {
+						t = (Teacher) array.get(j);
+						if (t.getId().equals(recordID)) {
+							System.out.println("Teacher found");
+						}
+					} 
+				}
+			}
+			
+		} else {
+			System.out.println("Record not found.");
+		}
+		
 	}
 
 	public static void main(String[] args) throws Exception {
