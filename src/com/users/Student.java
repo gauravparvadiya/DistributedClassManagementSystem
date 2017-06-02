@@ -5,7 +5,7 @@ public class Student {
 	private String fname;
 	private String lname;
 	private String[] coursesRegistered;
-	private String status;
+	private Integer status;
 	private String statusDueDate;
 	private String id;
 	
@@ -27,7 +27,7 @@ public class Student {
 	 * @param statusDueDate
 	 * @param id
 	 */
-	public Student(String fname, String lname, String[] coursesRegistered, String status,
+	public Student(String fname, String lname, String[] coursesRegistered, Integer status,
 			String statusDueDate, String id) {
 		this.fname = fname;
 		this.lname = lname;
@@ -69,10 +69,10 @@ public class Student {
 	public void setCoursesRegistered(String[] coursesRegistered) {
 		this.coursesRegistered = coursesRegistered;
 	}
-	public String getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
-	public void setStatus(String status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
 	public String getStatusDueDate() {

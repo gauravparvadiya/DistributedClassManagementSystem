@@ -23,7 +23,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.rmi.Center;
 import com.users.Manager;
-
 import jdk.nashorn.internal.parser.JSONParser;
 
 public class ManagerClient implements Runnable {
@@ -221,7 +220,6 @@ public class ManagerClient implements Runnable {
 
 				Scanner s = new Scanner(System.in);
 				Integer status;
-				Boolean result = false;
 				String firstName, lastName, address, phone, spec, loc, id, statusDate, fieldName, temp;
 				String DATE_PATTERN = "(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((19|20)\\d\\d)";
 				String[] courses;
