@@ -123,7 +123,7 @@ public class ManagerClient implements Runnable {
 	}
 
 	public static void connect_teacher(String managerID, String fn, String ln, String address, String ph, String spec,
-			String loc, String id) throws RemoteException, NotBoundException, ServerNotActiveException {
+			String loc) throws RemoteException, NotBoundException, ServerNotActiveException {
 		if (managerID.substring(0, 3).equals("MTL")) {
 			registry = LocateRegistry.getRegistry(2964);
 			Center stub = (Center) registry.lookup("MTLServer");
@@ -140,7 +140,7 @@ public class ManagerClient implements Runnable {
 	}
 
 	public static void connect_student(String managerID, String fn, String ln, String[] courses, Integer status,
-			String statusDate, String id) throws RemoteException, NotBoundException {
+			String statusDate) throws RemoteException, NotBoundException {
 		if (managerID.substring(0, 3).equals("MTL")) {
 			registry = LocateRegistry.getRegistry(2964);
 			Center stub = (Center) registry.lookup("MTLServer");
@@ -242,13 +242,7 @@ public class ManagerClient implements Runnable {
 					spec = s.nextLine();
 					System.out.println("Location : ");
 					loc = s.nextLine();
-					System.out.println("Id : (e.g.TR00001)");
-					id = s.nextLine();
-					if (id.length() == 7 && id.substring(0, 2).equals("TR") ) {
-						connect_teacher(managerID, firstName, lastName, address, phone, spec, loc, id);
-					} else {
-						System.out.println("Enter valid ID");
-					}
+					connect_teacher(managerID, firstName, lastName, address, phone, spec, loc);
 					break;
 				case "2":
 					System.out.println("Enter Student Information");
@@ -264,13 +258,10 @@ public class ManagerClient implements Runnable {
 					s.nextLine();
 					System.out.println("Status Date : (DD/MM/YYYY)");
 					statusDate = s.nextLine();
-					System.out.println("Id : ");
-					id = s.nextLine();
 					pattern = Pattern.compile(DATE_PATTERN);
 					matcher = pattern.matcher(statusDate);
-					if (matcher.matches() && (status.equals(0) || status.equals(1)) && id.substring(0, 2).equals("SR")
-							&& id.length() == 7) {
-						connect_student(managerID, firstName, lastName, courses, status, statusDate, id);
+					if (matcher.matches() && (status.equals(0) || status.equals(1))) {
+						connect_student(managerID, firstName, lastName, courses, status, statusDate);
 					} else
 						System.out.println("check if you have entered correct status or date or ID");
 					break;
@@ -279,7 +270,7 @@ public class ManagerClient implements Runnable {
 					break;
 				case "4":
 					System.out.println("Enter information to edit : ");
-					System.out.println("ID : (e.g. TR00001/SR00001)");
+					System.out.println("ID : (e.g. MTR00001/MSR10001)");
 					id = s.nextLine();
 					System.out.println("Field Name : ");
 					fieldName = s.nextLine();
