@@ -188,7 +188,8 @@ public class ManagerClient implements Runnable {
 		if (managerID.substring(0, 3).equals("MTL")) {
 			registry = LocateRegistry.getRegistry(2964);
 			Center stub = (Center) registry.lookup("MTLServer");
-			stub.getRecordCounts();
+			String reply = stub.getRecordCounts();
+			System.out.println("Count : \n" + reply);
 		} else if (managerID.substring(0, 3).equals("LVL")) {
 			registry = LocateRegistry.getRegistry(1212);
 			Center stub = (Center) registry.lookup("LVLServer");

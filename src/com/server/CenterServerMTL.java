@@ -291,9 +291,9 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 			buffer = new byte[10];
 			reply = new DatagramPacket(buffer, buffer.length);
 			socket.receive(reply);
-			responseMsg = responseMsg + " " + new String(reply.getData());
+			responseMsg = responseMsg + ", " + new String(reply.getData()) + ", MTL " + getCount();
 			//System.out.println("Reply : " + new String(reply.getData()));
-			
+			socket.close();
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

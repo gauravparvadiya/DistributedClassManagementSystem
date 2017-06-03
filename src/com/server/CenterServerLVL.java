@@ -27,7 +27,7 @@ import com.users.Teacher;
 
 import jdk.nashorn.internal.parser.JSONParser;
 
-public class CenterServerLVL extends UnicastRemoteObject implements Center {
+public class CenterServerLVL extends UnicastRemoteObject implements Center,Runnable {
 
 	public final HashMap<String, ArrayList<Object>> srtrRecords = new HashMap<String, ArrayList<Object>>();
 	public ArrayList<Object> srtrLvl, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
@@ -336,14 +336,21 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 		Registry registry = LocateRegistry.createRegistry(1212);
 		registry.bind("LVLServer", lvl);
 		System.out.println("Server started.");
+		Thread t = new Thread(lvl);
+		t.start();
 		
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
 		DatagramSocket socket = null;
 		try {
 			socket = new DatagramSocket(1212);
 			byte[] buffer = new byte[1];
 			DatagramPacket request = new DatagramPacket(buffer, buffer.length);
 			socket.receive(request);
-			String replyStr = "LVL : " + lvl.getCount();
+			String replyStr = "LVL " + getCount();
 			byte[] buffer1 = replyStr.getBytes();
 			DatagramPacket reply = new DatagramPacket(buffer1, buffer1.length, request.getAddress(), request.getPort());
 			socket.send(reply);

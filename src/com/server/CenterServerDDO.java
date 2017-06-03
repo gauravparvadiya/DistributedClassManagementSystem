@@ -26,7 +26,7 @@ import com.users.Teacher;
 
 import jdk.nashorn.internal.parser.JSONParser;
 
-public class CenterServerDDO extends UnicastRemoteObject implements Center {
+public class CenterServerDDO extends UnicastRemoteObject implements Center, Runnable {
 
 	public final HashMap<String, ArrayList<Object>> srtrRecords = new HashMap<String, ArrayList<Object>>();
 	public ArrayList<Object> srtrDdo;
@@ -414,7 +414,6 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 		} else {
 			return 0;
 		}
-		
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -423,21 +422,29 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 		Registry registry = LocateRegistry.createRegistry(1111);
 		registry.bind("DDOServer", ddo);
 		System.out.println("Server started.");
+		Thread t = new Thread(ddo);
+		t.start();
+		
+	}
 
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
 		DatagramSocket socket = null;
 		try {
 			socket = new DatagramSocket(1111);
 			byte[] buffer = new byte[1];
 			DatagramPacket request = new DatagramPacket(buffer, buffer.length);
 			socket.receive(request);
-			String replyStr = "DDO : " + ddo.getCount();
+			String replyStr = "DDO  " + getCount();
 			byte[] buffer1 = replyStr.getBytes();
 			DatagramPacket reply = new DatagramPacket(buffer1, buffer1.length, request.getAddress(), request.getPort());
 			socket.send(reply);
 			socket.close();
-
+			
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
 	}
+	
 }
