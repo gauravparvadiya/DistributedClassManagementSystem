@@ -88,13 +88,11 @@ public class ManagerClient implements Runnable {
 			for (int i = 0; i < managerClient.managerHashMap.get("LVL").size(); i++) {
 				Manager manager = managerClient.managerHashMap.get("LVL").get(i);
 				if (manager.getManagerID().substring(1, 8).equals(managerID)) {
-
 					String fname = manager.getFname();
 					String lname = manager.getLname();
 					System.out.println("Welcome , " + fname.substring(1, fname.length() - 1) + " "
 							+ lname.substring(1, lname.length() - 1));
 					return true;
-
 				} else {
 					return false;
 				}
@@ -170,6 +168,23 @@ public class ManagerClient implements Runnable {
 			registry = LocateRegistry.getRegistry(1111);
 			Center stub = (Center) registry.lookup("DDOServer");
 			stub.editRecord(id, fieldname, newvalue);
+		}
+	}
+	
+	public static void connect_record_count(String managerID)
+			throws RemoteException, NotBoundException {
+		if (managerID.substring(0, 3).equals("MTL")) {
+			registry = LocateRegistry.getRegistry(2964);
+			Center stub = (Center) registry.lookup("MTLServer");
+			stub.getRecordCounts();
+		} else if (managerID.substring(0, 3).equals("LVL")) {
+			registry = LocateRegistry.getRegistry(1212);
+			Center stub = (Center) registry.lookup("LVLServer");
+			stub.getRecordCounts();
+		} else {
+			registry = LocateRegistry.getRegistry(1111);
+			Center stub = (Center) registry.lookup("DDOServer");
+			stub.getRecordCounts();
 		}
 	}
 
@@ -277,6 +292,7 @@ public class ManagerClient implements Runnable {
 						System.out.println("Field can not be blank");
 					break;
 				case "3":
+					connect_record_count(managerID);
 					System.out.println("3");
 					break;
 				case "4":

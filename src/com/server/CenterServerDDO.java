@@ -1,10 +1,15 @@
 package com.server;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Reader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -21,17 +26,43 @@ import com.users.Teacher;
 
 import jdk.nashorn.internal.parser.JSONParser;
 
-public class CenterServerDDO extends UnicastRemoteObject implements Center {
-	
-	public final HashMap<String, ArrayList<Object>> srtrRecords = new HashMap<String, ArrayList<Object>>() ;
-	public ArrayList<Object> srtrDdo,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z;
+public class CenterServerDDO extends UnicastRemoteObject implements Center, Runnable {
+
+	public final HashMap<String, ArrayList<Object>> srtrRecords = new HashMap<String, ArrayList<Object>>();
+	public ArrayList<Object> srtrDdo;
+	public ArrayList<Object> a;
+	public ArrayList<Object> b;
+	public ArrayList<Object> c;
+	public ArrayList<Object> d;
+	public ArrayList<Object> e;
+	public ArrayList<Object> f;
+	public ArrayList<Object> g;
+	public ArrayList<Object> h;
+	public ArrayList<Object> i;
+	public ArrayList<Object> j;
+	public ArrayList<Object> k;
+	public ArrayList<Object> l;
+	public ArrayList<Object> m;
+	public ArrayList<Object> n;
+	public ArrayList<Object> o;
+	public ArrayList<Object> p;
+	public ArrayList<Object> q;
+	public ArrayList<Object> r;
+	public ArrayList<Object> s;
+	public ArrayList<Object> t;
+	public ArrayList<Object> u;
+	public ArrayList<Object> v;
+	public ArrayList<Object> w;
+	public ArrayList<Object> x;
+	public ArrayList<Object> y;
+	public ArrayList<Object> z;
 	JSONParser parser;
 	String lastSRecordId = new String();
 	String lastTRecordId = new String();
-	
+
 	protected CenterServerDDO() throws Exception {
 		super();
-		
+
 		srtrDdo = new ArrayList<Object>();
 		a = new ArrayList<Object>();
 		b = new ArrayList<Object>();
@@ -60,7 +91,7 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 		y = new ArrayList<Object>();
 		z = new ArrayList<Object>();
 	}
-	
+
 	private void addToMap(Object obj) {
 
 		Student stud;
@@ -184,19 +215,19 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 		srtrRecords.put("Y", y);
 		srtrRecords.put("Z", z);
 	}
-	
+
 	private void addDefaultRecords() {
 		File student = new File("res/student.json");
 		File teacher = new File("res/teacher.json");
 		Reader reader;
 		try {
-			
+
 			reader = new BufferedReader(new FileReader(student.getAbsolutePath()));
 			JsonParser parser = new JsonParser();
 			JsonArray array = parser.parse(reader).getAsJsonArray();
 
 			if (array != null) {
-				for (int i = 4; i < 7; i++) {
+				for (int i = 7; i < 10; i++) {
 					JsonObject object = (JsonObject) array.get(i);
 					JsonArray courseList = object.get("coursesRegistered").getAsJsonArray();
 					String[] coursesRegistered = new String[courseList.size()];
@@ -215,7 +246,7 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 			array = parser.parse(reader).getAsJsonArray();
 
 			if (array != null) {
-				for (int i = 4; i < 7; i++) {
+				for (int i = 7; i < 10; i++) {
 					JsonObject object = (JsonObject) array.get(i);
 					Teacher t = new Teacher(object.get("fname").getAsString(), object.get("lname").getAsString(),
 							object.get("address").getAsString(), object.get("phone").getAsString(),
@@ -225,7 +256,7 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 					lastTRecordId = object.get("id").getAsString();
 				}
 			}
-			
+
 			for (int ij = 0; ij < srtrDdo.size(); ij++) {
 				addToMap(srtrDdo.get(ij));
 			}
@@ -244,9 +275,10 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 		lastTRecordId = "DTR" + "" + ++id;
 		System.out.println(lastTRecordId);
 		Teacher t = new Teacher(firstName, lastName, address, phone, specialization, location, lastTRecordId);
-		//Student s = new Student(firstName, lastName, courseRegistered, status, statusDate, lastSRecordId);
+		// Student s = new Student(firstName, lastName, courseRegistered,
+		// status, statusDate, lastSRecordId);
 		addToMap(t);
-		
+
 	}
 
 	@Override
@@ -274,10 +306,47 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 
 	}
 	
+	private int getCount() {
+		int counter = 0;
+		if (srtrRecords.size() > 0) {
+			for (int i = 65; i < 91; i++) {
+				String key = Character.toString((char)i);
+				ArrayList<Object> array = srtrRecords.get(key);
+				counter += array.size();
+			}
+			return counter;
+		} else {
+			return 0;
+		}
+		
+	}
+
 	public static void main(String[] args) throws Exception {
 		CenterServerDDO ddo = new CenterServerDDO();
-		Registry registry=LocateRegistry.createRegistry(1111);
+		ddo.addDefaultRecords();
+		Registry registry = LocateRegistry.createRegistry(1111);
 		registry.bind("DDOServer", ddo);
 		System.out.println("Server started.");
+
+		DatagramSocket socket = null;
+		try {
+			socket = new DatagramSocket(1111);
+			byte[] buffer = new byte[1];
+			DatagramPacket request = new DatagramPacket(buffer, buffer.length);
+			socket.receive(request);
+			String replyStr = "DDO : " + ddo.getCount();
+			byte[] buffer1 = replyStr.getBytes();
+			DatagramPacket reply = new DatagramPacket(buffer1, buffer1.length, request.getAddress(), request.getPort());
+			socket.send(reply);
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+
 	}
 }

@@ -1,10 +1,20 @@
 package com.server;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Reader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -266,7 +276,37 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 	@Override
 	public String getRecordCounts() throws RemoteException {
 		// TODO Auto-generated method stub
+		System.out.println("called");
+		DatagramSocket socket = null;
+		try {
+			socket = new DatagramSocket();
+			byte [] message = "HashMap Request".getBytes();
+			InetAddress host = InetAddress.getByName("localhost");
+			DatagramPacket request = new DatagramPacket(message, message.length, host, 1111);
+			socket.send(request);
+			System.out.println("here1");
+			byte [] buffer = new byte[10];
+			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+			socket.receive(reply);
+			System.out.println("Reply : " + new String(reply.getData()));
+			
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		return null;
+	}
+
+	private HashMap<String, ArrayList<Object>> extracted(Object readObject) {
+		return (HashMap<String, ArrayList<Object>>) readObject;
 	}
 
 	@Override
