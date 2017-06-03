@@ -282,6 +282,7 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 			byte [] buffer = new byte[10];
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 			socket.receive(reply);
+			System.out.println("Reply : " + new String(reply.getData()));
 			responseMsg = new String(reply.getData());
 			socket.close();
 			socket = new DatagramSocket();

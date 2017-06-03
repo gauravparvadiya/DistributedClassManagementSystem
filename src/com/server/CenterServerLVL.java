@@ -22,6 +22,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.rmi.Center;
+import com.sun.prism.paint.Stop;
 import com.users.Student;
 import com.users.Teacher;
 
@@ -316,6 +317,7 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center,Runna
 	}
 	
 	private int getCount() {
+		System.out.println("Here 4");
 		int counter = 0;
 		if (srtrRecords.size() > 0) {
 			for (int i = 65; i < 91; i++) {
@@ -336,28 +338,39 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center,Runna
 		Registry registry = LocateRegistry.createRegistry(1212);
 		registry.bind("LVLServer", lvl);
 		System.out.println("Server started.");
-		Thread t = new Thread(lvl);
-		t.start();
+		new Thread(new Runnable() {
+			//DatagramSocket socket = null;
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					DatagramSocket socket = new DatagramSocket(1212);
+					byte[] buffer = new byte[1];
+					while(true) {
+						DatagramPacket request = new DatagramPacket(buffer, buffer.length);
+						System.out.println("here3");
+						socket.receive(request);
+						System.out.println("here2");
+						String replyStr = "LVL  " + lvl.getCount();
+						byte[] buffer1 = replyStr.getBytes();
+						DatagramPacket reply = new DatagramPacket(buffer1, buffer1.length, request.getAddress(), request.getPort());
+						socket.send(reply);
+					}
+					//socket.close();
+				} catch (Exception e) {
+					// TODO: handle exception
+				} finally {
+					
+				}
+			}
+		}).start();
+		//t.start();
 		
 	}
 
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		DatagramSocket socket = null;
-		try {
-			socket = new DatagramSocket(1212);
-			byte[] buffer = new byte[1];
-			DatagramPacket request = new DatagramPacket(buffer, buffer.length);
-			socket.receive(request);
-			String replyStr = "LVL " + getCount();
-			byte[] buffer1 = replyStr.getBytes();
-			DatagramPacket reply = new DatagramPacket(buffer1, buffer1.length, request.getAddress(), request.getPort());
-			socket.send(reply);
-			socket.close();
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
 	}
 
 }

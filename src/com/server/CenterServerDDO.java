@@ -422,25 +422,39 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center, Runn
 		Registry registry = LocateRegistry.createRegistry(1111);
 		registry.bind("DDOServer", ddo);
 		System.out.println("Server started.");
-		Thread t = new Thread(ddo);
-		t.start();
+		new Thread(new Runnable() {
+			//DatagramSocket socket = null;
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					DatagramSocket socket = new DatagramSocket(1111);
+					byte[] buffer = new byte[1];
+					
+					while(true) {
+						DatagramPacket request = new DatagramPacket(buffer, buffer.length);
+						socket.receive(request);
+						String replyStr = "DDO  " + ddo.getCount();
+						byte[] buffer1 = replyStr.getBytes();
+						DatagramPacket reply = new DatagramPacket(buffer1, buffer1.length, request.getAddress(), request.getPort());
+						socket.send(reply);
+					}
+					//socket.close();
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+			}
+		}).start();
+		
 		
 	}
 
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		DatagramSocket socket = null;
+		
 		try {
-			socket = new DatagramSocket(1111);
-			byte[] buffer = new byte[1];
-			DatagramPacket request = new DatagramPacket(buffer, buffer.length);
-			socket.receive(request);
-			String replyStr = "DDO  " + getCount();
-			byte[] buffer1 = replyStr.getBytes();
-			DatagramPacket reply = new DatagramPacket(buffer1, buffer1.length, request.getAddress(), request.getPort());
-			socket.send(reply);
-			socket.close();
+			
 			
 		} catch (Exception e) {
 			// TODO: handle exception
