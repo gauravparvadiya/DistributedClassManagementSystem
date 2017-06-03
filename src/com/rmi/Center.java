@@ -15,7 +15,7 @@ public interface Center extends Remote{
 	 * @param location
 	 * @throws RemoteException
 	 */
-	public void createTRecord(String firstName,String lastName,String address,String phone,String specialization,String location) throws RemoteException, ServerNotActiveException;
+	public Boolean createTRecord(String firstName,String lastName,String address,String phone,String specialization,String location) throws RemoteException, ServerNotActiveException;
 	
 	/**
 	 * method to create new Student Record
@@ -26,7 +26,7 @@ public interface Center extends Remote{
 	 * @param statusDate
 	 * @throws RemoteException
 	 */
-	public void createSRecord(String firstName,String lastName,String[] courseRegistered,Integer status,String statusDate) throws RemoteException;
+	public Boolean createSRecord(String firstName,String lastName,String[] courseRegistered,Integer status,String statusDate) throws RemoteException;
 	
 	/**
 	 * method to get record counts

@@ -267,7 +267,7 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center, Runn
 	}
 
 	@Override
-	public void createTRecord(String firstName, String lastName, String address, String phone, String specialization,
+	public Boolean createTRecord(String firstName, String lastName, String address, String phone, String specialization,
 			String location) throws RemoteException {
 		// TODO Auto-generated method stub
 		int id = Integer.parseInt(lastTRecordId.substring(3, 8));
@@ -278,11 +278,11 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center, Runn
 		// Student s = new Student(firstName, lastName, courseRegistered,
 		// status, statusDate, lastSRecordId);
 		addToMap(t);
-
+		return true;
 	}
 
 	@Override
-	public void createSRecord(String firstName, String lastName, String[] courseRegistered, Integer status,
+	public Boolean createSRecord(String firstName, String lastName, String[] courseRegistered, Integer status,
 			String statusDate) throws RemoteException {
 		// TODO Auto-generated method stub
 		System.out.println(a);
@@ -292,6 +292,7 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center, Runn
 		System.out.println(lastSRecordId);
 		Student s = new Student(firstName, lastName, courseRegistered, status, statusDate, lastSRecordId);
 		addToMap(s);
+		return true;
 	}
 
 	@Override
