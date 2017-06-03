@@ -26,7 +26,7 @@ import com.users.Teacher;
 
 import jdk.nashorn.internal.parser.JSONParser;
 
-public class CenterServerDDO extends UnicastRemoteObject implements Center, Runnable {
+public class CenterServerDDO extends UnicastRemoteObject implements Center {
 
 	public final HashMap<String, ArrayList<Object>> srtrRecords = new HashMap<String, ArrayList<Object>>();
 	public ArrayList<Object> srtrDdo;
@@ -439,11 +439,5 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center, Runn
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-
 	}
 }
