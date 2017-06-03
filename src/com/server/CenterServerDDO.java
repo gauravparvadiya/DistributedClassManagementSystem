@@ -1,12 +1,9 @@
 package com.server;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Reader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -16,10 +13,13 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.helper.LogHelper;
 import com.rmi.Center;
 import com.users.Student;
 import com.users.Teacher;
@@ -303,7 +303,102 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center, Runn
 
 	@Override
 	public void editRecord(String recordID, String fieldName, String[] newValue) throws RemoteException {
-		// TODO Auto-generated method stub
+		Boolean result = false;
+		if (recordID.substring(0, 3).equals("DSR")) {
+			System.out.println("Edit student");
+			Student s;
+			for (int i = 65; i < 91; i++) {
+				String key = Character.toString((char) i);
+				ArrayList<Object> array = srtrRecords.get(key);
+				for (int j = 0; j < array.size(); j++) {
+					if (array.get(j) instanceof Student) {
+						s = (Student) array.get(j);
+						if (s.getId().equals(recordID)) {
+							System.out.println("Student found");
+							result = true;
+							if (fieldName.equals("status")) {
+								int status = Integer.parseInt(newValue[0]);
+								if (status == 0 || status == 1) {
+									s.setStatus(status);
+									System.out.println("Address is changed to : " + s.getStatus());
+								}
+								else
+									System.out.println("Enter 1 or 0 (active/deactive)");
+							} else if (fieldName.equals("statusDueDate")) {
+								Pattern pattern;
+								Matcher matcher;
+								String DATE_PATTERN = "(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((19|20)\\d\\d)";
+								pattern = Pattern.compile(DATE_PATTERN);
+								matcher = pattern.matcher(newValue[0]);
+								if (matcher.matches()) {
+									s.setStatusDueDate(newValue[0]);
+									System.out.println("Date is changed to : " + s.getStatusDueDate());
+								} else
+									System.out.println("Wrond date format");
+							} else if (fieldName.equals("coursesRegistered")) {
+								
+								s.setCoursesRegistered(newValue);
+								System.out.println("Courses are changed.");
+								/*String[] temp=s.getCoursesRegistered();
+								for(int z=0;z<temp.length;z++){
+									
+									System.out.println(temp[z]);
+								}*/
+							}
+							return;
+						} else
+							result = false;
+					}
+				}
+			}
+		} else if (recordID.substring(0, 3).equals("DTR")) {
+			System.out.println("Edit teacher");
+			Teacher t;
+			for (int i = 65; i < 91; i++) {
+				String key = Character.toString((char) i);
+				ArrayList<Object> array = srtrRecords.get(key);
+				for (int j = 0; j < array.size(); j++) {
+					if (array.get(j) instanceof Teacher) {
+						t = (Teacher) array.get(j);
+						if (t.getId().equals(recordID)) {
+							System.out.println("Teacher found");
+							result = true;
+							// System.out.println(result);
+							if (fieldName.equals("address")) {
+								//print();
+								//System.out.println(".........." + t.getAddress());
+								t.setAddress(newValue[0]);
+								String temp="Address is changed to : " + t.getAddress();
+								System.out.println("Address is changed to : " + t.getAddress());
+								LogHelper.Log("res/DDO0001/ddo_log.log", LogHelper.TYPE_INFO, temp);
+								//print();
+							} else if (fieldName.equals("location")) {
+								t.setLocation(newValue[0]);
+								System.out.println("Location is changed to : " + t.getLocation());
+							} else if (fieldName.equals("phone")) {
+								t.setPhone(newValue[0]);
+								System.out.println("Phone is changed to : " + t.getPhone());
+							}
+
+							return;
+						} else {
+							result = false;
+							// System.out.println(result);
+						}
+					}
+
+				}
+			}
+
+		} else {
+			result = false;
+			// System.out.println(result);
+		}
+		if (!result) {
+			System.out.println("no record found");
+		} else {
+
+		}
 
 	}
 	
@@ -339,6 +434,7 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center, Runn
 			byte[] buffer1 = replyStr.getBytes();
 			DatagramPacket reply = new DatagramPacket(buffer1, buffer1.length, request.getAddress(), request.getPort());
 			socket.send(reply);
+			socket.close();
 
 		} catch (Exception e) {
 			// TODO: handle exception
