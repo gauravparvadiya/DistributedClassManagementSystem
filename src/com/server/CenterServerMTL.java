@@ -4,7 +4,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.Reader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -243,12 +249,8 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 			String location) throws RemoteException {
 		// TODO Auto-generated method stub
 		int id = Integer.parseInt(lastTRecordId.substring(3, 8));
-		System.out.println(id);
 		lastTRecordId = "MTR" + "" + ++id;
-		System.out.println(lastTRecordId);
 		Teacher t = new Teacher(firstName, lastName, address, phone, specialization, location, lastTRecordId);
-		// Student s = new Student(firstName, lastName, courseRegistered,
-		// status, statusDate, lastSRecordId);
 		addToMap(t);
 		return true;
 	}
@@ -267,8 +269,43 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 	@Override
 	public String getRecordCounts() throws RemoteException {
 		// TODO Auto-generated method stub
-
-		return null;
+		
+		DatagramSocket socket = null;
+		String responseMsg = new String();
+		try {
+			socket = new DatagramSocket();
+			byte [] message = "Record Count".getBytes();
+			InetAddress host = InetAddress.getByName("localhost");
+			DatagramPacket request = new DatagramPacket(message, message.length, host, 1212);
+			socket.send(request);
+			System.out.println("here1");
+			byte [] buffer = new byte[10];
+			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+			socket.receive(reply);
+			responseMsg = new String(reply.getData());
+			socket.close();
+			socket = new DatagramSocket();
+			request = new DatagramPacket(message, message.length, host, 1111);
+			socket.send(request);
+			System.out.println("here1");
+			buffer = new byte[10];
+			reply = new DatagramPacket(buffer, buffer.length);
+			socket.receive(reply);
+			responseMsg = responseMsg + " " + new String(reply.getData());
+			//System.out.println("Reply : " + new String(reply.getData()));
+			
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return responseMsg;
 	}
 
 	@Override
@@ -382,6 +419,21 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 			}
 		}
 	}
+	
+	private int getCount() {
+		int counter = 0;
+		if (srtrRecords.size() > 0) {
+			for (int i = 65; i < 91; i++) {
+				String key = Character.toString((char)i);
+				ArrayList<Object> array = srtrRecords.get(key);
+				counter += array.size();
+			}
+			return counter;
+		} else {
+			return 0;
+		}
+		
+	}
 
 	public static void main(String[] args) throws Exception {
 
@@ -390,6 +442,23 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 		Registry registry = LocateRegistry.createRegistry(2964);
 		registry.bind("MTLServer", mtl);
 		System.out.println("Server started.");
+		
+		DatagramSocket socket = null;
+		try {
+			socket = new DatagramSocket(2964);
+			byte[] buffer = new byte[1];
+			DatagramPacket request = new DatagramPacket(buffer, buffer.length);
+			socket.receive(request);
+			String replyStr = "MTL : " + mtl.getCount();
+			byte[] buffer1 = replyStr.getBytes();
+			DatagramPacket reply = new DatagramPacket(buffer1, buffer1.length, request.getAddress(), request.getPort());
+			socket.send(reply);
+			socket.close();
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
 	}
 
 }

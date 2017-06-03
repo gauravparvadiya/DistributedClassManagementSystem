@@ -1,14 +1,10 @@
 package com.server;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Reader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -283,11 +279,20 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 			socket = new DatagramSocket();
 			byte [] message = "HashMap Request".getBytes();
 			InetAddress host = InetAddress.getByName("localhost");
-			DatagramPacket request = new DatagramPacket(message, message.length, host, 1111);
+			DatagramPacket request = new DatagramPacket(message, message.length, host, 2964);
 			socket.send(request);
 			System.out.println("here1");
 			byte [] buffer = new byte[10];
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+			socket.receive(reply);
+			System.out.println("Reply : " + new String(reply.getData()));
+			socket.close();
+			socket = new DatagramSocket();
+			request = new DatagramPacket(message, message.length, host, 1111);
+			socket.send(request);
+			System.out.println("here1");
+			buffer = new byte[10];
+			reply = new DatagramPacket(buffer, buffer.length);
 			socket.receive(reply);
 			System.out.println("Reply : " + new String(reply.getData()));
 			
@@ -301,13 +306,7 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
 		return null;
-	}
-
-	private HashMap<String, ArrayList<Object>> extracted(Object readObject) {
-		return (HashMap<String, ArrayList<Object>>) readObject;
 	}
 
 	@Override
@@ -316,12 +315,42 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 
 	}
 	
+	private int getCount() {
+		int counter = 0;
+		if (srtrRecords.size() > 0) {
+			for (int i = 65; i < 91; i++) {
+				String key = Character.toString((char)i);
+				ArrayList<Object> array = srtrRecords.get(key);
+				counter += array.size();
+			}
+			return counter;
+		} else {
+			return 0;
+		}
+		
+	}
+	
 	public static void main(String[] args) throws Exception {
 		CenterServerLVL lvl = new CenterServerLVL();
 		lvl.addDefaultRecords();
 		Registry registry = LocateRegistry.createRegistry(1212);
 		registry.bind("LVLServer", lvl);
 		System.out.println("Server started.");
+		
+		DatagramSocket socket = null;
+		try {
+			socket = new DatagramSocket(1212);
+			byte[] buffer = new byte[1];
+			DatagramPacket request = new DatagramPacket(buffer, buffer.length);
+			socket.receive(request);
+			String replyStr = "LVL : " + lvl.getCount();
+			byte[] buffer1 = replyStr.getBytes();
+			DatagramPacket reply = new DatagramPacket(buffer1, buffer1.length, request.getAddress(), request.getPort());
+			socket.send(reply);
+			socket.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 	}
 
 }
