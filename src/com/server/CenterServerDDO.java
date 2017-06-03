@@ -256,7 +256,7 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 		System.out.println(a);
 		int id = Integer.parseInt(lastSRecordId.substring(3, 8));
 		System.out.println(id);
-		lastSRecordId = "DTR" + "" + ++id;
+		lastSRecordId = "DSR" + "" + ++id;
 		System.out.println(lastSRecordId);
 		Student s = new Student(firstName, lastName, courseRegistered, status, statusDate, lastSRecordId);
 		addToMap(s);

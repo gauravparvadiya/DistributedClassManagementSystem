@@ -272,7 +272,7 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 
 	@Override
 	public void editRecord(String recordID, String fieldName, String[] newValue) throws RemoteException {
-		// TODO Auto-generated method stub
+		Boolean result=false;
 		if (recordID.substring(0, 3).equals("MSR")) {
 			System.out.println("Edit student");
 			Student s;
@@ -284,7 +284,11 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 						s = (Student) array.get(j);
 						if (s.getId().equals(recordID)) {
 							System.out.println("Student found");
+							result=true;
+							break;
 						}
+						else
+							result=false;
 					} 
 				}
 			}
@@ -299,15 +303,21 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 						t = (Teacher) array.get(j);
 						if (t.getId().equals(recordID)) {
 							System.out.println("Teacher found");
+							result=true;
+							break;
 						}
+						else
+							result=false;
 					} 
 				}
 			}
 			
 		} else {
-			System.out.println("Record not found.");
+			result=false;
 		}
-		
+		if(!result){
+			System.out.println("no record found");
+		}
 	}
 
 	public static void main(String[] args) throws Exception {

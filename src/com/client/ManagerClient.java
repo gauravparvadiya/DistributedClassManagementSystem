@@ -174,16 +174,18 @@ public class ManagerClient implements Runnable {
 	}
 
 	public static boolean validate_edit(String id, String fieldName, String[] newValue) {
-		
+
 		if (id.length() == 8) {
-			if ( id.substring(0, 3).equals("MTR") || id.substring(0, 3).equals("LTR") || id.substring(0, 3).equals("DTR")) {
+			if (id.substring(0, 3).equals("MTR") || id.substring(0, 3).equals("LTR")
+					|| id.substring(0, 3).equals("DTR")) {
 				if (fieldName.equals("address") || fieldName.equals("location") || fieldName.equals("phone")) {
 					return true;
 				} else {
 					System.out.println("Invalid Field");
 					return false;
 				}
-			} else if (id.substring(0, 3).equals("MSR") || id.substring(0, 3).equals("LSR") || id.substring(0, 3).equals("DSR")) {
+			} else if (id.substring(0, 3).equals("MSR") || id.substring(0, 3).equals("LSR")
+					|| id.substring(0, 3).equals("DSR")) {
 				if (fieldName.equals("coursesRegistered") || fieldName.equals("status")
 						|| fieldName.equals("statusDueDate")) {
 					return true;
@@ -197,7 +199,7 @@ public class ManagerClient implements Runnable {
 		} else {
 			System.out.println("Please enter valid record ID");
 			return false;
-		} 
+		}
 	}
 
 	public static void main(String[] args) throws IOException, NotBoundException, ServerNotActiveException {
@@ -205,7 +207,7 @@ public class ManagerClient implements Runnable {
 		ManagerClient managerClient = new ManagerClient();
 		Thread t = new Thread(managerClient);
 		t.start();
-		
+
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("Enter the Manager ID : ");
 		String managerID = reader.readLine();
@@ -265,10 +267,14 @@ public class ManagerClient implements Runnable {
 					statusDate = s.nextLine();
 					pattern = Pattern.compile(DATE_PATTERN);
 					matcher = pattern.matcher(statusDate);
-					if (matcher.matches() && (status.equals(0) || status.equals(1))) {
-						connect_student(managerID, firstName, lastName, courses, status, statusDate);
+					if (firstName != null && lastName != null && courses != null && status != null
+							&& statusDate != null) {
+						if (matcher.matches() && (status.equals(0) || status.equals(1))) {
+							connect_student(managerID, firstName, lastName, courses, status, statusDate);
+						} else
+							System.out.println("check if you have entered correct status or date or ID");
 					} else
-						System.out.println("check if you have entered correct status or date or ID");
+						System.out.println("Field can not be blank");
 					break;
 				case "3":
 					System.out.println("3");
@@ -284,7 +290,7 @@ public class ManagerClient implements Runnable {
 					if (temp.contains(",")) {
 						newValue = temp.split(",");
 					} else
-						newValue[0] = temp;		
+						newValue[0] = temp;
 					if (validate_edit(id, fieldName, newValue)) {
 						connect_edit(managerID, fieldName, newValue, id);
 					}

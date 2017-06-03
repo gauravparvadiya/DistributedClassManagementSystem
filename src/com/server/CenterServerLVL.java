@@ -257,7 +257,7 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 		System.out.println(a);
 		int id = Integer.parseInt(lastSRecordId.substring(3, 8));
 		System.out.println(id);
-		lastSRecordId = "LTR" + "" + ++id;
+		lastSRecordId = "LSR" + "" + ++id;
 		System.out.println(lastSRecordId);
 		Student s = new Student(firstName, lastName, courseRegistered, status, statusDate, lastSRecordId);
 		addToMap(s);
@@ -278,7 +278,7 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 	public static void main(String[] args) throws Exception {
 		CenterServerLVL lvl = new CenterServerLVL();
 		lvl.addDefaultRecords();
-		Registry registry = LocateRegistry.createRegistry(2964);
+		Registry registry = LocateRegistry.createRegistry(1212);
 		registry.bind("LVLServer", lvl);
 		System.out.println("Server started.");
 	}
