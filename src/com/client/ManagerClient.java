@@ -126,7 +126,7 @@ public class ManagerClient implements Runnable {
 		if (managerID.substring(0, 3).equals("MTL")) {
 			registry = LocateRegistry.getRegistry(2964);
 			Center stub = (Center) registry.lookup("MTLServer");
-			if (stub.createTRecord(fn, ln, address, ph, spec, loc)) {
+			if (stub.createTRecord(fn, ln, address, ph, spec, loc,managerID)) {
 				System.out.println("Record created successfully. ");
 				logger.info("Teacher record created successfully.");
 			} else {
@@ -136,7 +136,7 @@ public class ManagerClient implements Runnable {
 		} else if (managerID.substring(0, 3).equals("LVL")) {
 			registry = LocateRegistry.getRegistry(1212);
 			Center stub = (Center) registry.lookup("LVLServer");
-			if (stub.createTRecord(fn, ln, address, ph, spec, loc)) {
+			if (stub.createTRecord(fn, ln, address, ph, spec, loc,managerID)) {
 				System.out.println("Record created successfully. ");
 				logger.info("Teacher record created successfully.");
 			} else {
@@ -146,7 +146,7 @@ public class ManagerClient implements Runnable {
 		} else {
 			registry = LocateRegistry.getRegistry(1111);
 			Center stub = (Center) registry.lookup("DDOServer");
-			if (stub.createTRecord(fn, ln, address, ph, spec, loc)) {
+			if (stub.createTRecord(fn, ln, address, ph, spec, loc,managerID)) {
 				System.out.println("Record created successfully. ");
 				logger.info("Teacher record created successfully.");
 			} else {
@@ -162,7 +162,7 @@ public class ManagerClient implements Runnable {
 		if (managerID.substring(0, 3).equals("MTL")) {
 			registry = LocateRegistry.getRegistry(2964);
 			Center stub = (Center) registry.lookup("MTLServer");
-			if (stub.createSRecord(fn, ln, courses, status, statusDate)) {
+			if (stub.createSRecord(fn, ln, courses, status, statusDate,managerID)) {
 				System.out.println("Record created successfully.");
 				logger.info("Student record created successfully.");
 			} else {
@@ -172,7 +172,7 @@ public class ManagerClient implements Runnable {
 		} else if (managerID.substring(0, 3).equals("LVL")) {
 			registry = LocateRegistry.getRegistry(1212);
 			Center stub = (Center) registry.lookup("LVLServer");
-			if (stub.createSRecord(fn, ln, courses, status, statusDate)) {
+			if (stub.createSRecord(fn, ln, courses, status, statusDate,managerID)) {
 				System.out.println("Record created successfully.");
 				logger.info("Student record created successfully.");
 			} else {
@@ -182,7 +182,7 @@ public class ManagerClient implements Runnable {
 		} else {
 			registry = LocateRegistry.getRegistry(1111);
 			Center stub = (Center) registry.lookup("DDOServer");
-			if (stub.createSRecord(fn, ln, courses, status, statusDate)) {
+			if (stub.createSRecord(fn, ln, courses, status, statusDate,managerID)) {
 				System.out.println("Record created successfully.");
 				logger.info("Student record created successfully.");
 			} else {
@@ -199,19 +199,19 @@ public class ManagerClient implements Runnable {
 			logger.debug("connected to registry 2964");
 			Center stub = (Center) registry.lookup("MTLServer");
 			logger.debug("connected to Montreal server");
-			stub.editRecord(id, fieldname, newvalue);
+			stub.editRecord(id, fieldname, newvalue,managerID);
 		} else if (managerID.substring(0, 3).equals("LVL")) {
 			registry = LocateRegistry.getRegistry(1212);
 			logger.debug("connected to registry 1212");
 			Center stub = (Center) registry.lookup("LVLServer");
 			logger.debug("connected to Laval server");
-			stub.editRecord(id, fieldname, newvalue);
+			stub.editRecord(id, fieldname, newvalue,managerID);
 		} else {
 			registry = LocateRegistry.getRegistry(1111);
 			logger.debug("connected to registry 1111");
 			Center stub = (Center) registry.lookup("DDOServer");
 			logger.debug("connected to Dollard-des-Ormeaux server");
-			stub.editRecord(id, fieldname, newvalue);
+			stub.editRecord(id, fieldname, newvalue,managerID);
 		}
 		logger.info("Using editRecord method");
 	}
@@ -224,21 +224,21 @@ public class ManagerClient implements Runnable {
 			logger.debug("connected to registry 2964");
 			Center stub = (Center) registry.lookup("MTLServer");
 			logger.debug("connected to Montreal server");
-			String reply = stub.getRecordCounts();
+			String reply = stub.getRecordCounts(managerID);
 			System.out.println("Count : \n" + reply);
 		} else if (managerID.substring(0, 3).equals("LVL")) {
 			registry = LocateRegistry.getRegistry(1212);
 			logger.debug("connected to registry 1212");
 			Center stub = (Center) registry.lookup("LVLServer");
 			logger.debug("connected to Laval server");
-			String reply = stub.getRecordCounts();
+			String reply = stub.getRecordCounts(managerID);
 			System.out.println("Count : \n" + reply);
 		} else {
 			registry = LocateRegistry.getRegistry(1111);
 			logger.debug("connected to registry 1111");
 			Center stub = (Center) registry.lookup("DDOServer");
 			logger.debug("connected to Dollard-des-Ormeaux server");
-			String reply = stub.getRecordCounts();
+			String reply = stub.getRecordCounts(managerID);
 			System.out.println("Count : \n" + reply);
 		}
 	}

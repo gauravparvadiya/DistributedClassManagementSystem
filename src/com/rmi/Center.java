@@ -15,7 +15,7 @@ public interface Center extends Remote{
 	 * @param location
 	 * @throws RemoteException
 	 */
-	public Boolean createTRecord(String firstName,String lastName,String address,String phone,String specialization,String location) throws RemoteException, ServerNotActiveException;
+	public Boolean createTRecord(String firstName,String lastName,String address,String phone,String specialization,String location,String managerID) throws RemoteException, ServerNotActiveException;
 	
 	/**
 	 * method to create new Student Record
@@ -26,14 +26,15 @@ public interface Center extends Remote{
 	 * @param statusDate
 	 * @throws RemoteException
 	 */
-	public Boolean createSRecord(String firstName,String lastName,String[] courseRegistered,Integer status,String statusDate) throws RemoteException;
+	public Boolean createSRecord(String firstName,String lastName,String[] courseRegistered,Integer status,String statusDate,String managerID) throws RemoteException;
 	
 	/**
 	 * method to get record counts
+	 * @param managerID
 	 * @return String number of records with location 
 	 * @throws RemoteException
 	 */
-	public String getRecordCounts() throws RemoteException;
+	public String getRecordCounts(String managerID) throws RemoteException;
 	
 	/**
 	 * method to edit record
@@ -42,6 +43,6 @@ public interface Center extends Remote{
 	 * @param newValue
 	 * @throws RemoteException
 	 */
-	public void editRecord (String recordID,String fieldName,String[] newValue) throws RemoteException;
+	public void editRecord (String recordID,String fieldName,String[] newValue,String managerID) throws RemoteException;
 	
 }

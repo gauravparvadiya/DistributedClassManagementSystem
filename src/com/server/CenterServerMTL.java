@@ -254,7 +254,7 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 
 	@Override
 	public Boolean createTRecord(String firstName, String lastName, String address, String phone, String specialization,
-			String location) throws RemoteException {
+			String location,String managerID) throws RemoteException {
 		// TODO Auto-generated method stub
 		int id = Integer.parseInt(lastTRecordId.substring(3, 8));
 		lastTRecordId = "MTR" + "" + ++id;
@@ -265,7 +265,7 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 
 	@Override
 	public Boolean createSRecord(String firstName, String lastName, String[] courseRegistered, Integer status,
-			String statusDate) throws RemoteException {
+			String statusDate,String managerID) throws RemoteException {
 		// TODO Auto-generated method stub
 		int id = Integer.parseInt(lastSRecordId.substring(3, 8));
 		lastSRecordId = "MSR" + "" + ++id;
@@ -275,7 +275,7 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 	}
 
 	@Override
-	public String getRecordCounts() throws RemoteException {
+	public String getRecordCounts(String managerID) throws RemoteException {
 		// TODO Auto-generated method stub
 		
 		DatagramSocket socket = null;
@@ -318,7 +318,7 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 	}
 
 	@Override
-	public void editRecord(String recordID, String fieldName, String[] newValue) throws RemoteException {
+	public void editRecord(String recordID, String fieldName, String[] newValue,String managerID) throws RemoteException {
 		Boolean result = false;
 		if (recordID.substring(0, 3).equals("MSR")) {
 			System.out.println("Edit student");
