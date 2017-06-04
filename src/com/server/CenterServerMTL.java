@@ -20,9 +20,12 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.helper.LogHelper;
 import com.rmi.Center;
 import com.users.Student;
 import com.users.Teacher;
@@ -36,7 +39,9 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 	JSONParser parser;
 	String lastSRecordId = new String();
 	String lastTRecordId = new String();
-
+	LogHelper helper;
+	Logger logger = Logger.getLogger(CenterServerMTL.class);
+	
 	public CenterServerMTL() throws Exception {
 		super();
 
@@ -68,6 +73,9 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 		x = new ArrayList<Object>();
 		y = new ArrayList<Object>();
 		z = new ArrayList<Object>();
+		
+		helper = new LogHelper();
+		helper.setupLogFile("log/MTLServer.log");
 	}
 
 	private void addDefaultRecords() {
