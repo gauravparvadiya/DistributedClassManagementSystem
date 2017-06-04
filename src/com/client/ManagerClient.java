@@ -18,17 +18,13 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.helper.LogHelper;
 import com.rmi.Center;
-import com.sun.org.apache.xml.internal.security.utils.HelperNodeList;
 import com.users.Manager;
 import jdk.nashorn.internal.parser.JSONParser;
 
@@ -39,7 +35,7 @@ public class ManagerClient implements Runnable {
 	JSONParser parser;
 	static Registry registry;
 	static Logger logger = Logger.getLogger(ManagerClient.class);
-	
+
 	public ManagerClient() throws FileNotFoundException {
 
 		File f = new File("res/manager.json");
@@ -126,7 +122,7 @@ public class ManagerClient implements Runnable {
 		if (managerID.substring(0, 3).equals("MTL")) {
 			registry = LocateRegistry.getRegistry(2964);
 			Center stub = (Center) registry.lookup("MTLServer");
-			if (stub.createTRecord(fn, ln, address, ph, spec, loc,managerID)) {
+			if (stub.createTRecord(fn, ln, address, ph, spec, loc, managerID)) {
 				System.out.println("Record created successfully. ");
 				logger.info("Teacher record created successfully.");
 			} else {
@@ -136,7 +132,7 @@ public class ManagerClient implements Runnable {
 		} else if (managerID.substring(0, 3).equals("LVL")) {
 			registry = LocateRegistry.getRegistry(1212);
 			Center stub = (Center) registry.lookup("LVLServer");
-			if (stub.createTRecord(fn, ln, address, ph, spec, loc,managerID)) {
+			if (stub.createTRecord(fn, ln, address, ph, spec, loc, managerID)) {
 				System.out.println("Record created successfully. ");
 				logger.info("Teacher record created successfully.");
 			} else {
@@ -146,7 +142,7 @@ public class ManagerClient implements Runnable {
 		} else {
 			registry = LocateRegistry.getRegistry(1111);
 			Center stub = (Center) registry.lookup("DDOServer");
-			if (stub.createTRecord(fn, ln, address, ph, spec, loc,managerID)) {
+			if (stub.createTRecord(fn, ln, address, ph, spec, loc, managerID)) {
 				System.out.println("Record created successfully. ");
 				logger.info("Teacher record created successfully.");
 			} else {
@@ -162,7 +158,7 @@ public class ManagerClient implements Runnable {
 		if (managerID.substring(0, 3).equals("MTL")) {
 			registry = LocateRegistry.getRegistry(2964);
 			Center stub = (Center) registry.lookup("MTLServer");
-			if (stub.createSRecord(fn, ln, courses, status, statusDate,managerID)) {
+			if (stub.createSRecord(fn, ln, courses, status, statusDate, managerID)) {
 				System.out.println("Record created successfully.");
 				logger.info("Student record created successfully.");
 			} else {
@@ -172,7 +168,7 @@ public class ManagerClient implements Runnable {
 		} else if (managerID.substring(0, 3).equals("LVL")) {
 			registry = LocateRegistry.getRegistry(1212);
 			Center stub = (Center) registry.lookup("LVLServer");
-			if (stub.createSRecord(fn, ln, courses, status, statusDate,managerID)) {
+			if (stub.createSRecord(fn, ln, courses, status, statusDate, managerID)) {
 				System.out.println("Record created successfully.");
 				logger.info("Student record created successfully.");
 			} else {
@@ -182,7 +178,7 @@ public class ManagerClient implements Runnable {
 		} else {
 			registry = LocateRegistry.getRegistry(1111);
 			Center stub = (Center) registry.lookup("DDOServer");
-			if (stub.createSRecord(fn, ln, courses, status, statusDate,managerID)) {
+			if (stub.createSRecord(fn, ln, courses, status, statusDate, managerID)) {
 				System.out.println("Record created successfully.");
 				logger.info("Student record created successfully.");
 			} else {
@@ -199,25 +195,24 @@ public class ManagerClient implements Runnable {
 			logger.debug("connected to registry 2964");
 			Center stub = (Center) registry.lookup("MTLServer");
 			logger.debug("connected to Montreal server");
-			stub.editRecord(id, fieldname, newvalue,managerID);
+			stub.editRecord(id, fieldname, newvalue, managerID);
 		} else if (managerID.substring(0, 3).equals("LVL")) {
 			registry = LocateRegistry.getRegistry(1212);
 			logger.debug("connected to registry 1212");
 			Center stub = (Center) registry.lookup("LVLServer");
 			logger.debug("connected to Laval server");
-			stub.editRecord(id, fieldname, newvalue,managerID);
+			stub.editRecord(id, fieldname, newvalue, managerID);
 		} else {
 			registry = LocateRegistry.getRegistry(1111);
 			logger.debug("connected to registry 1111");
 			Center stub = (Center) registry.lookup("DDOServer");
 			logger.debug("connected to Dollard-des-Ormeaux server");
-			stub.editRecord(id, fieldname, newvalue,managerID);
+			stub.editRecord(id, fieldname, newvalue, managerID);
 		}
 		logger.info("Using editRecord method");
 	}
-	
-	public static void connect_record_count(String managerID)
-			throws RemoteException, NotBoundException {
+
+	public static void connect_record_count(String managerID) throws RemoteException, NotBoundException {
 		logger.info("Using getRecordCount method.");
 		if (managerID.substring(0, 3).equals("MTL")) {
 			registry = LocateRegistry.getRegistry(2964);
@@ -273,7 +268,7 @@ public class ManagerClient implements Runnable {
 			return false;
 		}
 	}
-	
+
 	public static void main(String[] args) throws IOException, NotBoundException, ServerNotActiveException {
 
 		ManagerClient managerClient = new ManagerClient();
@@ -286,7 +281,7 @@ public class ManagerClient implements Runnable {
 
 		if (managerClient.managerIdentification(managerClient, managerID)) {
 			LogHelper helper = new LogHelper();
-			helper.setupLogFile("log/"+managerID+".log");
+			helper.setupLogFile("log/" + managerID + ".log");
 			logger.debug("connected to manager client.");
 			do {
 				System.out.println("\n 1. Create Teacher ");
@@ -355,7 +350,7 @@ public class ManagerClient implements Runnable {
 					connect_record_count(managerID);
 					break;
 				case "4":
-					//logger.info("Starting to edit .");
+					// logger.info("Starting to edit .");
 					System.out.println("Enter information to edit : ");
 					System.out.println("ID : (e.g. MTR00001/MSR10001)");
 					id = s.nextLine();
@@ -372,7 +367,7 @@ public class ManagerClient implements Runnable {
 					}
 					break;
 				case "5":
-					File file = new File("log/"+managerID+".log");
+					File file = new File("log/" + managerID + ".log");
 					file.delete();
 					System.out.println("Bye Bye!!!");
 					System.exit(0);

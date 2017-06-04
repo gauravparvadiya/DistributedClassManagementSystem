@@ -20,9 +20,12 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.helper.LogHelper;
 import com.rmi.Center;
 import com.users.Student;
 import com.users.Teacher;
@@ -63,6 +66,9 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 	String lastSRecordId = new String();
 	String lastTRecordId = new String();
 
+	LogHelper helper;
+	Logger logger = Logger.getLogger(CenterServerDDO.class);
+
 	protected CenterServerDDO() throws Exception {
 		super();
 
@@ -93,6 +99,9 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 		x = new ArrayList<Object>();
 		y = new ArrayList<Object>();
 		z = new ArrayList<Object>();
+
+		helper = new LogHelper();
+		helper.setupLogFile("log/DDOServer.log");
 	}
 
 	private void addToMap(Object obj) {
@@ -271,22 +280,23 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 
 	@Override
 	public Boolean createTRecord(String firstName, String lastName, String address, String phone, String specialization,
-			String location,String managerID) throws RemoteException {
+			String location, String managerID) throws RemoteException {
 		// TODO Auto-generated method stub
 		int id = Integer.parseInt(lastTRecordId.substring(3, 8));
 		System.out.println(id);
 		lastTRecordId = "DTR" + "" + ++id;
 		System.out.println(lastTRecordId);
 		Teacher t = new Teacher(firstName, lastName, address, phone, specialization, location, lastTRecordId);
-		// Student s = new Student(firstName, lastName, courseRegistered,
-		// status, statusDate, lastSRecordId);
+		logger.info(managerID + "| createTRecord method | Teacher information - [{" + firstName + ", " + lastName + ", "
+				+ address + ", " + phone + ", " + specialization + ", " + location + "}]");
 		addToMap(t);
+		logger.info(managerID + "| Teacher created successfully.");
 		return true;
 	}
 
 	@Override
 	public Boolean createSRecord(String firstName, String lastName, String[] courseRegistered, Integer status,
-			String statusDate,String managerID) throws RemoteException {
+			String statusDate, String managerID) throws RemoteException {
 		// TODO Auto-generated method stub
 		System.out.println(a);
 		int id = Integer.parseInt(lastSRecordId.substring(3, 8));
@@ -294,55 +304,70 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 		lastSRecordId = "DSR" + "" + ++id;
 		System.out.println(lastSRecordId);
 		Student s = new Student(firstName, lastName, courseRegistered, status, statusDate, lastSRecordId);
+		logger.info(managerID + "| createSRecord method | Student information - [{" + firstName + ", " + lastName + ", "
+				+ courseRegistered + ", " + status + ", " + statusDate + "}]");
 		addToMap(s);
+		logger.info(managerID + "| Student created successfully.");
 		return true;
 	}
 
 	@Override
 	public String getRecordCounts(String managerID) throws RemoteException {
 		// TODO Auto-generated method stub
+		logger.info(managerID + "| Using getRecordCounts method.");
 		DatagramSocket socket = null;
 		String responseMsg = new String();
 		try {
+			logger.info(managerID + "| Creating UDP connection with MTL and LVL server to get record counts.");
 			socket = new DatagramSocket();
-			byte [] message = "Record Count".getBytes();
+			byte[] message = "Record Count".getBytes();
 			InetAddress host = InetAddress.getByName("localhost");
 			DatagramPacket request = new DatagramPacket(message, message.length, host, 1212);
 			socket.send(request);
+			logger.info(managerID + "| Sent request to LVL server - localhost:1212");
 			System.out.println("here1");
-			byte [] buffer = new byte[10];
+			byte[] buffer = new byte[10];
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 			socket.receive(reply);
+			logger.info(managerID + "| Reply from LVL server : " + new String(reply.getData()));
 			System.out.println("Reply : " + new String(reply.getData()));
 			responseMsg = new String(reply.getData());
 			socket.close();
+			logger.info(managerID + "| Connection closed with LVL server.");
 			socket = new DatagramSocket();
 			request = new DatagramPacket(message, message.length, host, 2964);
 			socket.send(request);
+			logger.info(managerID + "| Sent request to MTL server - localhost:2964");
 			System.out.println("here1");
 			buffer = new byte[10];
 			reply = new DatagramPacket(buffer, buffer.length);
 			socket.receive(reply);
+			logger.info(managerID + "| Reply from MTL server : " + new String(reply.getData()));
 			responseMsg = responseMsg + ", " + new String(reply.getData()) + ", DDO " + getCount();
-			//System.out.println("Reply : " + new String(reply.getData()));
+			// System.out.println("Reply : " + new String(reply.getData()));
 			socket.close();
+			logger.info(managerID + "| Connection closed with MTL server.");
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
+			logger.error(managerID + "| Error in socket connection | " + e.toString());
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
+			logger.error(managerID + "| Unknownhost exception | " + e.toString());
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			logger.error(managerID + "| IO exception | " + e.toString());
 			e.printStackTrace();
 		}
-		
 		return responseMsg;
 	}
 
 	@Override
-	public void editRecord(String recordID, String fieldName, String[] newValue,String managerID) throws RemoteException {
+	public void editRecord(String recordID, String fieldName, String[] newValue, String managerID)
+			throws RemoteException {
 		Boolean result = false;
+		logger.info(managerID + "| Using editRecord method. Record ID : " + recordID);
 		if (recordID.substring(0, 3).equals("DSR")) {
 			System.out.println("Edit student");
 			Student s;
@@ -354,15 +379,18 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 						s = (Student) array.get(j);
 						if (s.getId().equals(recordID)) {
 							System.out.println("Student found");
+							logger.info(managerID + "| Record id " + recordID + " identified as a student.");
 							result = true;
 							if (fieldName.equals("status")) {
 								int status = Integer.parseInt(newValue[0]);
 								if (status == 0 || status == 1) {
 									s.setStatus(status);
-									System.out.println("Address is changed to : " + s.getStatus());
-								}
-								else
+									logger.info(
+											managerID + "| Record - " + recordID + " status changed to " + newValue[0]);
+								} else {
+									logger.info(managerID + "| Entered invalid status number.");
 									System.out.println("Enter 1 or 0 (active/deactive)");
+								}
 							} else if (fieldName.equals("statusDueDate")) {
 								Pattern pattern;
 								Matcher matcher;
@@ -371,22 +399,24 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 								matcher = pattern.matcher(newValue[0]);
 								if (matcher.matches()) {
 									s.setStatusDueDate(newValue[0]);
-									System.out.println("Date is changed to : " + s.getStatusDueDate());
-								} else
+									logger.info(managerID + "| Record - " + recordID + " status date changed to "
+											+ newValue[0]);
+								} else {
+									logger.info(managerID + "| Entered invalid date.");
 									System.out.println("Wrond date format");
+								}
 							} else if (fieldName.equals("coursesRegistered")) {
-								
+
 								s.setCoursesRegistered(newValue);
+								logger.info(managerID + "| Record - " + recordID + " registered courses changed to "
+										+ newValue);
 								System.out.println("Courses are changed.");
-								/*String[] temp=s.getCoursesRegistered();
-								for(int z=0;z<temp.length;z++){
-									
-									System.out.println(temp[z]);
-								}*/
 							}
 							return;
-						} else
+						} else {
+							logger.info(managerID + "| Record id " + recordID + " not found.");
 							result = false;
+						}
 					}
 				}
 			}
@@ -401,22 +431,30 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 						t = (Teacher) array.get(j);
 						if (t.getId().equals(recordID)) {
 							System.out.println("Teacher found");
+							logger.info(managerID + "| Record id " + recordID + " identified as a teacher.");
 							result = true;
 							if (fieldName.equals("address")) {
 								t.setAddress(newValue[0]);
+								logger.info(
+										managerID + "| Record - " + recordID + " address changed to " + newValue[0]);
 								System.out.println("Address is changed to : " + t.getAddress());
-								//LogHelper.Log("res/DDO0001/ddo_log.log", LogHelper.TYPE_INFO, temp);
+								// LogHelper.Log("res/DDO0001/ddo_log.log",
+								// LogHelper.TYPE_INFO, temp);
 							} else if (fieldName.equals("location")) {
 								t.setLocation(newValue[0]);
+								logger.info(
+										managerID + "| Record - " + recordID + " location changed to " + newValue[0]);
 								System.out.println("Location is changed to : " + t.getLocation());
 							} else if (fieldName.equals("phone")) {
 								t.setPhone(newValue[0]);
+								logger.info(managerID + "| Record - " + recordID + " phone number changed to "
+										+ newValue[0]);
 								System.out.println("Phone is changed to : " + t.getPhone());
 							}
-
 							return;
 						} else {
 							result = false;
+							logger.info(managerID + "| Record - " + recordID + " not found.");
 						}
 					}
 
@@ -428,17 +466,17 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 		}
 		if (!result) {
 			System.out.println("no record found");
+			logger.info(managerID + "| Record - " + recordID + " not found.");
 		} else {
 
 		}
-
 	}
-	
+
 	private int getCount() {
 		int counter = 0;
 		if (srtrRecords.size() > 0) {
 			for (int i = 65; i < 91; i++) {
-				String key = Character.toString((char)i);
+				String key = Character.toString((char) i);
 				ArrayList<Object> array = srtrRecords.get(key);
 				counter += array.size();
 			}
@@ -454,6 +492,7 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 		Registry registry = LocateRegistry.createRegistry(1111);
 		registry.bind("DDOServer", ddo);
 		System.out.println("Server started.");
+		ddo.logger.info("Server started");
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -461,21 +500,25 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 				try {
 					DatagramSocket socket = new DatagramSocket(1111);
 					byte[] buffer = new byte[1];
-					
-					while(true) {
+
+					while (true) {
 						DatagramPacket request = new DatagramPacket(buffer, buffer.length);
 						socket.receive(request);
+						ddo.logger.info("Request received from : " + request.getAddress() + ":" + request.getPort());
 						String replyStr = "DDO  " + ddo.getCount();
 						byte[] buffer1 = replyStr.getBytes();
-						DatagramPacket reply = new DatagramPacket(buffer1, buffer1.length, request.getAddress(), request.getPort());
+						DatagramPacket reply = new DatagramPacket(buffer1, buffer1.length, request.getAddress(),
+								request.getPort());
 						socket.send(reply);
+						ddo.logger.info("Reply sent to : " + request.getAddress() + ":" + request.getPort());
 					}
-					//socket.close();
+					// socket.close();
 				} catch (Exception e) {
 					// TODO: handle exception
+					ddo.logger.error("Exception | " + e.toString());
 				}
 			}
 		}).start();
 	}
-	
+
 }

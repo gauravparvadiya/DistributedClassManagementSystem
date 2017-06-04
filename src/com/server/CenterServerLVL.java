@@ -17,10 +17,15 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.helper.LogHelper;
 import com.rmi.Center;
 import com.users.Student;
 import com.users.Teacher;
@@ -34,10 +39,12 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 	JSONParser parser;
 	String lastSRecordId = new String();
 	String lastTRecordId = new String();
+	LogHelper helper;
+	Logger logger = Logger.getLogger(CenterServerLVL.class);
 
 	protected CenterServerLVL() throws Exception {
 		super();
-		
+
 		srtrLvl = new ArrayList<Object>();
 		a = new ArrayList<Object>();
 		b = new ArrayList<Object>();
@@ -65,7 +72,9 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 		x = new ArrayList<Object>();
 		y = new ArrayList<Object>();
 		z = new ArrayList<Object>();
-		
+
+		helper = new LogHelper();
+		helper.setupLogFile("log/LVLServer.log");
 	}
 
 	private void addToMap(Object obj) {
@@ -191,13 +200,13 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 		srtrRecords.put("Y", y);
 		srtrRecords.put("Z", z);
 	}
-	
+
 	private void addDefaultRecords() {
 		File student = new File("res/student.json");
 		File teacher = new File("res/teacher.json");
 		Reader reader;
 		try {
-			
+
 			reader = new BufferedReader(new FileReader(student.getAbsolutePath()));
 			JsonParser parser = new JsonParser();
 			JsonArray array = parser.parse(reader).getAsJsonArray();
@@ -232,7 +241,7 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 					lastTRecordId = object.get("id").getAsString();
 				}
 			}
-			
+
 			for (int ij = 0; ij < srtrLvl.size(); ij++) {
 				addToMap(srtrLvl.get(ij));
 			}
@@ -244,21 +253,23 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 
 	@Override
 	public Boolean createTRecord(String firstName, String lastName, String address, String phone, String specialization,
-			String location,String managerID) throws RemoteException {
+			String location, String managerID) throws RemoteException {
 		// TODO Auto-generated method stub
 		int id = Integer.parseInt(lastTRecordId.substring(3, 8));
 		System.out.println(id);
 		lastTRecordId = "LTR" + "" + ++id;
 		System.out.println(lastTRecordId);
 		Teacher t = new Teacher(firstName, lastName, address, phone, specialization, location, lastTRecordId);
-		//Student s = new Student(firstName, lastName, courseRegistered, status, statusDate, lastSRecordId);
+		logger.info(managerID + "| createTRecord method | Teacher information - [{" + firstName + ", " + lastName + ", "
+				+ address + ", " + phone + ", " + specialization + ", " + location + "}]");
 		addToMap(t);
+		logger.info(managerID + "| Teacher created successfully.");
 		return true;
 	}
 
 	@Override
 	public Boolean createSRecord(String firstName, String lastName, String[] courseRegistered, Integer status,
-			String statusDate,String managerID) throws RemoteException {
+			String statusDate, String managerID) throws RemoteException {
 		// TODO Auto-generated method stub
 		System.out.println(a);
 		int id = Integer.parseInt(lastSRecordId.substring(3, 8));
@@ -266,59 +277,182 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 		lastSRecordId = "LSR" + "" + ++id;
 		System.out.println(lastSRecordId);
 		Student s = new Student(firstName, lastName, courseRegistered, status, statusDate, lastSRecordId);
+		logger.info(managerID + "| createSRecord method | Student information - [{" + firstName + ", " + lastName + ", "
+				+ courseRegistered + ", " + status + ", " + statusDate + "}]");
 		addToMap(s);
+		logger.info(managerID + "| Student created successfully.");
 		return true;
 	}
 
 	@Override
 	public String getRecordCounts(String managerID) throws RemoteException {
 		// TODO Auto-generated method stub
+		logger.info(managerID + "| Using getRecordCounts method.");
 		DatagramSocket socket = null;
 		String responseMsg = new String();
 		try {
+			logger.info(managerID + "| Creating UDP connection with MTL and DDO server to get record counts.");
 			socket = new DatagramSocket();
-			byte [] message = "Record Count".getBytes();
+			byte[] message = "Record Count".getBytes();
 			InetAddress host = InetAddress.getByName("localhost");
 			DatagramPacket request = new DatagramPacket(message, message.length, host, 2964);
 			socket.send(request);
-			byte [] buffer = new byte[10];
+			logger.info(managerID + "| Sent request to MTL server - localhost:2964");
+			byte[] buffer = new byte[10];
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 			socket.receive(reply);
+			logger.info(managerID + "| Reply from MTL server : " + new String(reply.getData()));
 			responseMsg = new String(reply.getData());
 			socket.close();
+			logger.info(managerID + "| Connection closed with MTL server.");
 			socket = new DatagramSocket();
 			request = new DatagramPacket(message, message.length, host, 1111);
 			socket.send(request);
+			logger.info(managerID + "| Sent request to DDO server - localhost:1111");
 			buffer = new byte[10];
 			reply = new DatagramPacket(buffer, buffer.length);
 			socket.receive(reply);
+			logger.info(managerID + "| Reply from DDO server - " + new String(reply.getData()));
 			responseMsg = responseMsg + ", " + new String(reply.getData()) + ", LVL " + getCount();
 			socket.close();
-			
+			logger.info(managerID + "| Connection closed with DDO server.");
+
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
+			logger.error(managerID + "| Error in socket connection | " + e.toString());
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
+			logger.error(managerID + "| Unknownhost exception | " + e.toString());
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			logger.error(managerID + "| IO exception | " + e.toString());
 			e.printStackTrace();
 		}
 		return responseMsg;
 	}
 
 	@Override
-	public void editRecord(String recordID, String fieldName, String[] newValue,String managerID) throws RemoteException {
+	public void editRecord(String recordID, String fieldName, String[] newValue, String managerID)
+			throws RemoteException {
+		Boolean result = false;
+		logger.info(managerID + "| Using editRecord method. Record ID : " + recordID);
+		if (recordID.substring(0, 3).equals("LSR")) {
+			Student s;
+			for (int i = 65; i < 91; i++) {
+				String key = Character.toString((char) i);
+				ArrayList<Object> array = srtrRecords.get(key);
+				for (int j = 0; j < array.size(); j++) {
+					if (array.get(j) instanceof Student) {
+						s = (Student) array.get(j);
+						if (s.getId().equals(recordID)) {
+							System.out.println("Student found");
+							logger.info(managerID + "| Record id " + recordID + " identified as a student.");
+							result = true;
+							if (fieldName.equals("status")) {
+								int status = Integer.parseInt(newValue[0]);
+								if (status == 0 || status == 1) {
+									s.setStatus(status);
+									logger.info(
+											managerID + "| Record - " + recordID + " status changed to " + newValue[0]);
+									System.out.println("Address is changed to : " + s.getStatus());
+								} else {
+									logger.info(managerID + "| Entered invalid status number.");
+									System.out.println("Enter 1 or 0 (active/deactive)");
+								}
+							} else if (fieldName.equals("statusDueDate")) {
+								Pattern pattern;
+								Matcher matcher;
+								String DATE_PATTERN = "(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((19|20)\\d\\d)";
+								pattern = Pattern.compile(DATE_PATTERN);
+								matcher = pattern.matcher(newValue[0]);
+								if (matcher.matches()) {
+									s.setStatusDueDate(newValue[0]);
+									logger.info(managerID + "| Record - " + recordID + " status date changed to "
+											+ newValue[0]);
+									System.out.println("Date is changed to : " + s.getStatusDueDate());
+								} else {
+									logger.info(managerID + "| Entered invalid date.");
+									System.out.println("Wrond date format");
+								}
+							} else if (fieldName.equals("coursesRegistered")) {
+								s.setCoursesRegistered(newValue);
+								logger.info(managerID + "| Record - " + recordID + " registered courses changed to "
+										+ newValue);
+								System.out.println("Courses are changed.");
+							}
+							return;
+						} else {
+							logger.info(managerID + "| Record id " + recordID + " not found.");
+							result = false;
+						}
+					}
+				}
+			}
+		} else if (recordID.substring(0, 3).equals("LTR")) {
+			System.out.println("Edit teacher");
+			Teacher t;
+			for (int i = 65; i < 91; i++) {
+				String key = Character.toString((char) i);
+				ArrayList<Object> array = srtrRecords.get(key);
+				for (int j = 0; j < array.size(); j++) {
+					if (array.get(j) instanceof Teacher) {
+						t = (Teacher) array.get(j);
+						if (t.getId().equals(recordID)) {
+							System.out.println("Teacher found");
+							logger.info(managerID + "| Record id " + recordID + " identified as a teacher.");
+							result = true;
+							// System.out.println(result);
+							if (fieldName.equals("address")) {
+								// print();
+								// System.out.println(".........." +
+								// t.getAddress());
+								t.setAddress(newValue[0]);
+								logger.info(
+										managerID + "| Record - " + recordID + " address changed to " + newValue[0]);
+								System.out.println("Address is changed to : " + t.getAddress());
+								// print();
+							} else if (fieldName.equals("location")) {
+								t.setLocation(newValue[0]);
+								logger.info(
+										managerID + "| Record - " + recordID + " location changed to " + newValue[0]);
+								System.out.println("Location is changed to : " + t.getLocation());
+							} else if (fieldName.equals("phone")) {
+								t.setPhone(newValue[0]);
+								logger.info(managerID + "| Record - " + recordID + " phone number changed to "
+										+ newValue[0]);
+								System.out.println("Phone is changed to : " + t.getPhone());
+							}
+							return;
+						} else {
+							result = false;
+							logger.info(managerID + "| Record - " + recordID + " not found.");
+							// System.out.println(result);
+						}
+					}
 
+				}
+			}
+
+		} else {
+			result = false;
+			// System.out.println(result);
+		}
+		if (!result) {
+			logger.info(managerID + "| Record - " + recordID + " not found.");
+			System.out.println("no record found");
+		} else {
+
+		}
 	}
-	
+
 	private int getCount() {
 		System.out.println("Here 4");
 		int counter = 0;
 		if (srtrRecords.size() > 0) {
 			for (int i = 65; i < 91; i++) {
-				String key = Character.toString((char)i);
+				String key = Character.toString((char) i);
 				ArrayList<Object> array = srtrRecords.get(key);
 				counter += array.size();
 			}
@@ -326,38 +460,43 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 		} else {
 			return 0;
 		}
-		
+
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		CenterServerLVL lvl = new CenterServerLVL();
 		lvl.addDefaultRecords();
 		Registry registry = LocateRegistry.createRegistry(1212);
 		registry.bind("LVLServer", lvl);
 		System.out.println("Server started.");
+		lvl.logger.info("Server started");
 		new Thread(new Runnable() {
-			//DatagramSocket socket = null;
+			// DatagramSocket socket = null;
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
 				try {
 					DatagramSocket socket = new DatagramSocket(1212);
 					byte[] buffer = new byte[1];
-					while(true) {
+					while (true) {
 						DatagramPacket request = new DatagramPacket(buffer, buffer.length);
 						System.out.println("here3");
 						socket.receive(request);
+						lvl.logger.info("Request received from : " + request.getAddress() + ":" + request.getPort());
 						System.out.println("here2");
 						String replyStr = "LVL  " + lvl.getCount();
 						byte[] buffer1 = replyStr.getBytes();
-						DatagramPacket reply = new DatagramPacket(buffer1, buffer1.length, request.getAddress(), request.getPort());
+						DatagramPacket reply = new DatagramPacket(buffer1, buffer1.length, request.getAddress(),
+								request.getPort());
 						socket.send(reply);
+						lvl.logger.info("Reply sent to : " + request.getAddress() + ":" + request.getPort());
 					}
-					//socket.close();
+					// socket.close();
 				} catch (Exception e) {
 					// TODO: handle exception
+					lvl.logger.error("Exception | " + e.toString());
 				} finally {
-					
+
 				}
 			}
 		}).start();
