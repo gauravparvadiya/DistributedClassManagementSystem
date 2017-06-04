@@ -1,94 +1,46 @@
+/**
+ * 
+ */
 package com.helper;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 
 /**
- * this class is for creating logs during execution
- * 
+ * @author gauravparvadiya
+ *
  */
 public class LogHelper {
 
-	/**
-	 * string constant for log file
-	 * 
-	 * @type String
-	 */
-	//public static final String LOG_FILE = "res/game.log";
+	private PatternLayout layout;
+	private FileAppender fileAppender;
+	private Logger rootLogger;
 
 	/**
-	 * Constant for information log
 	 * 
-	 * @type String
 	 */
-	public static final String TYPE_INFO = "INFO";
+	public LogHelper() {
+		super();
+		layout = new PatternLayout();
+		fileAppender = new FileAppender();
+		rootLogger = Logger.getRootLogger();
+	}
 
-	/**
-	 * Constant for error log
-	 * 
-	 * @type String
-	 */
-	public static final String TYPE_ERROR = "ERROR";
-	
-	/**
-	 * Constant for game error log
-	 * 
-	 * @type String
-	 */
-	//public static final String TYPE_INFO_ERROR = "GAME_ERROR";
+	public void setupLogFile(String fileName) {
+		// creates pattern layout
+		String conversionPattern = "%-7p %d [%t] %c %x - %m%n";
+		layout.setConversionPattern(conversionPattern);
 
-	/**
-	 * this method used to store log
-	 * 
-	 * @param log_type
-	 * @param log_message
-	 * @throws IOException
-	 */
-	public static void Log(String logfile,String log_type, String log_message) {
+		// creates file appender
+		fileAppender.setFile(fileName);
+		fileAppender.setLayout(layout);
+		fileAppender.activateOptions();
 
-		Path path = Paths.get(logfile);
-		Charset charset = StandardCharsets.UTF_8;
-		ArrayList<String> details = new ArrayList<String>();
-
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS dd-MM-yyyy ");
-
-		Date now = new Date();
-		String strDate = "[ " + sdf.format(now) + " " + log_type + " ]";
-
-		details.add(strDate + " " + log_message);
-
-		try {
-			if (Files.exists(path)) {
-				Files.write(path, details, charset, StandardOpenOption.APPEND);
-			} else {
-				Files.write(path, details, charset, StandardOpenOption.CREATE_NEW);
-			}
-		} catch (IOException e) {
-		}
+		// configures the root logger
+		rootLogger.setLevel(Level.DEBUG);
+		rootLogger.addAppender(fileAppender);
 
 	}
-	
-	/*public static List<String> getLastLine() {
-		Path path = Paths.get(LOG_FILE);
-		Charset charset = StandardCharsets.UTF_8;
-		ArrayList<String> details = new ArrayList<String>();
-		
-		List<String> lines = null;
-		
-		try {
-			if (Files.exists(path)) {
-				lines = Files.readAllLines(path);
-			} 
-		} catch (IOException e) {}
-		return lines;
-	}*/
 }

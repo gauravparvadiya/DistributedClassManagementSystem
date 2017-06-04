@@ -4,9 +4,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -19,14 +23,13 @@ import java.util.regex.Pattern;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.helper.LogHelper;
 import com.rmi.Center;
 import com.users.Student;
 import com.users.Teacher;
 
 import jdk.nashorn.internal.parser.JSONParser;
 
-public class CenterServerDDO extends UnicastRemoteObject implements Center, Runnable {
+public class CenterServerDDO extends UnicastRemoteObject implements Center {
 
 	public final HashMap<String, ArrayList<Object>> srtrRecords = new HashMap<String, ArrayList<Object>>();
 	public ArrayList<Object> srtrDdo;
@@ -298,7 +301,43 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center, Runn
 	@Override
 	public String getRecordCounts() throws RemoteException {
 		// TODO Auto-generated method stub
-		return null;
+		DatagramSocket socket = null;
+		String responseMsg = new String();
+		try {
+			socket = new DatagramSocket();
+			byte [] message = "Record Count".getBytes();
+			InetAddress host = InetAddress.getByName("localhost");
+			DatagramPacket request = new DatagramPacket(message, message.length, host, 1212);
+			socket.send(request);
+			System.out.println("here1");
+			byte [] buffer = new byte[10];
+			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+			socket.receive(reply);
+			System.out.println("Reply : " + new String(reply.getData()));
+			responseMsg = new String(reply.getData());
+			socket.close();
+			socket = new DatagramSocket();
+			request = new DatagramPacket(message, message.length, host, 2964);
+			socket.send(request);
+			System.out.println("here1");
+			buffer = new byte[10];
+			reply = new DatagramPacket(buffer, buffer.length);
+			socket.receive(reply);
+			responseMsg = responseMsg + ", " + new String(reply.getData()) + ", DDO " + getCount();
+			//System.out.println("Reply : " + new String(reply.getData()));
+			socket.close();
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return responseMsg;
 	}
 
 	@Override
@@ -363,15 +402,10 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center, Runn
 						if (t.getId().equals(recordID)) {
 							System.out.println("Teacher found");
 							result = true;
-							// System.out.println(result);
 							if (fieldName.equals("address")) {
-								//print();
-								//System.out.println(".........." + t.getAddress());
 								t.setAddress(newValue[0]);
-								String temp="Address is changed to : " + t.getAddress();
 								System.out.println("Address is changed to : " + t.getAddress());
-								LogHelper.Log("res/DDO0001/ddo_log.log", LogHelper.TYPE_INFO, temp);
-								//print();
+								//LogHelper.Log("res/DDO0001/ddo_log.log", LogHelper.TYPE_INFO, temp);
 							} else if (fieldName.equals("location")) {
 								t.setLocation(newValue[0]);
 								System.out.println("Location is changed to : " + t.getLocation());
@@ -383,7 +417,6 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center, Runn
 							return;
 						} else {
 							result = false;
-							// System.out.println(result);
 						}
 					}
 
@@ -392,7 +425,6 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center, Runn
 
 		} else {
 			result = false;
-			// System.out.println(result);
 		}
 		if (!result) {
 			System.out.println("no record found");
@@ -423,7 +455,6 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center, Runn
 		registry.bind("DDOServer", ddo);
 		System.out.println("Server started.");
 		new Thread(new Runnable() {
-			//DatagramSocket socket = null;
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
@@ -445,20 +476,6 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center, Runn
 				}
 			}
 		}).start();
-		
-		
-	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-		try {
-			
-			
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
 	}
 	
 }

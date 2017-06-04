@@ -344,14 +344,8 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 								} else
 									System.out.println("Wrond date format");
 							} else if (fieldName.equals("coursesRegistered")) {
-								
 								s.setCoursesRegistered(newValue);
 								System.out.println("Courses are changed.");
-								/*String[] temp=s.getCoursesRegistered();
-								for(int z=0;z<temp.length;z++){
-									
-									System.out.println(temp[z]);
-								}*/
 							}
 							return;
 						} else

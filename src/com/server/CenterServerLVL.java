@@ -28,7 +28,7 @@ import com.users.Teacher;
 
 import jdk.nashorn.internal.parser.JSONParser;
 
-public class CenterServerLVL extends UnicastRemoteObject implements Center,Runnable {
+public class CenterServerLVL extends UnicastRemoteObject implements Center {
 
 	public final HashMap<String, ArrayList<Object>> srtrRecords = new HashMap<String, ArrayList<Object>>();
 	public ArrayList<Object> srtrLvl, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
@@ -274,28 +274,27 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center,Runna
 	@Override
 	public String getRecordCounts() throws RemoteException {
 		// TODO Auto-generated method stub
-		System.out.println("called");
 		DatagramSocket socket = null;
+		String responseMsg = new String();
 		try {
 			socket = new DatagramSocket();
-			byte [] message = "HashMap Request".getBytes();
+			byte [] message = "Record Count".getBytes();
 			InetAddress host = InetAddress.getByName("localhost");
 			DatagramPacket request = new DatagramPacket(message, message.length, host, 2964);
 			socket.send(request);
-			System.out.println("here1");
 			byte [] buffer = new byte[10];
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 			socket.receive(reply);
-			System.out.println("Reply : " + new String(reply.getData()));
+			responseMsg = new String(reply.getData());
 			socket.close();
 			socket = new DatagramSocket();
 			request = new DatagramPacket(message, message.length, host, 1111);
 			socket.send(request);
-			System.out.println("here1");
 			buffer = new byte[10];
 			reply = new DatagramPacket(buffer, buffer.length);
 			socket.receive(reply);
-			System.out.println("Reply : " + new String(reply.getData()));
+			responseMsg = responseMsg + ", " + new String(reply.getData()) + ", LVL " + getCount();
+			socket.close();
 			
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
@@ -307,7 +306,7 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center,Runna
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return responseMsg;
 	}
 
 	@Override
@@ -364,13 +363,6 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center,Runna
 				}
 			}
 		}).start();
-		//t.start();
-		
-	}
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
 	}
 
 }

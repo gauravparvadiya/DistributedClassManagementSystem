@@ -18,10 +18,17 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.helper.LogHelper;
 import com.rmi.Center;
+import com.sun.org.apache.xml.internal.security.utils.HelperNodeList;
 import com.users.Manager;
 import jdk.nashorn.internal.parser.JSONParser;
 
@@ -31,7 +38,8 @@ public class ManagerClient implements Runnable {
 	public ArrayList<Manager> mtl, lvl, ddo;
 	JSONParser parser;
 	static Registry registry;
-
+	static Logger logger = Logger.getLogger(ManagerClient.class);
+	
 	public ManagerClient() throws FileNotFoundException {
 
 		File f = new File("res/manager.json");
@@ -80,8 +88,6 @@ public class ManagerClient implements Runnable {
 					System.out.println("Welcome , " + fname.substring(1, fname.length() - 1) + " "
 							+ lname.substring(1, lname.length() - 1));
 					return true;
-				} else {
-					return false;
 				}
 			}
 		} else if (managerID.substring(0, 3).equals("LVL")) {
@@ -93,10 +99,7 @@ public class ManagerClient implements Runnable {
 					System.out.println("Welcome , " + fname.substring(1, fname.length() - 1) + " "
 							+ lname.substring(1, lname.length() - 1));
 					return true;
-				} else {
-					return false;
 				}
-
 			}
 		} else if (managerID.substring(0, 3).equals("DDO")) {
 			for (int i = 0; i < managerClient.managerHashMap.get("DDO").size(); i++) {
@@ -108,10 +111,7 @@ public class ManagerClient implements Runnable {
 					System.out.println("Welcome , " + fname.substring(1, fname.length() - 1) + " "
 							+ lname.substring(1, lname.length() - 1));
 					return true;
-				} else {
-					return false;
 				}
-
 			}
 		} else {
 			System.out.println("Manager ID should start with MTL/LVL/DDO");
@@ -122,46 +122,72 @@ public class ManagerClient implements Runnable {
 
 	public static void connect_teacher(String managerID, String fn, String ln, String address, String ph, String spec,
 			String loc) throws RemoteException, NotBoundException, ServerNotActiveException {
+		logger.info("Using createTRecord method.");
 		if (managerID.substring(0, 3).equals("MTL")) {
 			registry = LocateRegistry.getRegistry(2964);
 			Center stub = (Center) registry.lookup("MTLServer");
 			if (stub.createTRecord(fn, ln, address, ph, spec, loc)) {
 				System.out.println("Record created successfully. ");
+				logger.info("Teacher record created successfully.");
+			} else {
+				System.out.println("Something went wrong!!! ");
+				logger.error("Server returns error creating teacher record.");
 			}
 		} else if (managerID.substring(0, 3).equals("LVL")) {
 			registry = LocateRegistry.getRegistry(1212);
 			Center stub = (Center) registry.lookup("LVLServer");
 			if (stub.createTRecord(fn, ln, address, ph, spec, loc)) {
 				System.out.println("Record created successfully. ");
+				logger.info("Teacher record created successfully.");
+			} else {
+				System.out.println("Something went wrong!!! ");
+				logger.error("Server returns error creating teacher record.");
 			}
 		} else {
 			registry = LocateRegistry.getRegistry(1111);
 			Center stub = (Center) registry.lookup("DDOServer");
 			if (stub.createTRecord(fn, ln, address, ph, spec, loc)) {
 				System.out.println("Record created successfully. ");
+				logger.info("Teacher record created successfully.");
+			} else {
+				System.out.println("Something went wrong!!! ");
+				logger.error("Server returns error creating teacher record.");
 			}
 		}
 	}
 
 	public static void connect_student(String managerID, String fn, String ln, String[] courses, Integer status,
 			String statusDate) throws RemoteException, NotBoundException {
+		logger.info("Using createSRecord method.");
 		if (managerID.substring(0, 3).equals("MTL")) {
 			registry = LocateRegistry.getRegistry(2964);
 			Center stub = (Center) registry.lookup("MTLServer");
 			if (stub.createSRecord(fn, ln, courses, status, statusDate)) {
 				System.out.println("Record created successfully.");
+				logger.info("Student record created successfully.");
+			} else {
+				System.out.println("Something went wrong!!! ");
+				logger.error("Server returns error creating student record.");
 			}
 		} else if (managerID.substring(0, 3).equals("LVL")) {
 			registry = LocateRegistry.getRegistry(1212);
 			Center stub = (Center) registry.lookup("LVLServer");
 			if (stub.createSRecord(fn, ln, courses, status, statusDate)) {
 				System.out.println("Record created successfully.");
+				logger.info("Student record created successfully.");
+			} else {
+				System.out.println("Something went wrong!!! ");
+				logger.error("Server returns error creating student record.");
 			}
 		} else {
 			registry = LocateRegistry.getRegistry(1111);
 			Center stub = (Center) registry.lookup("DDOServer");
 			if (stub.createSRecord(fn, ln, courses, status, statusDate)) {
 				System.out.println("Record created successfully.");
+				logger.info("Student record created successfully.");
+			} else {
+				System.out.println("Something went wrong!!! ");
+				logger.error("Server returns error creating student record.");
 			}
 		}
 	}
@@ -170,34 +196,50 @@ public class ManagerClient implements Runnable {
 			throws RemoteException, NotBoundException {
 		if (managerID.substring(0, 3).equals("MTL")) {
 			registry = LocateRegistry.getRegistry(2964);
+			logger.debug("connected to registry 2964");
 			Center stub = (Center) registry.lookup("MTLServer");
+			logger.debug("connected to Montreal server");
 			stub.editRecord(id, fieldname, newvalue);
 		} else if (managerID.substring(0, 3).equals("LVL")) {
 			registry = LocateRegistry.getRegistry(1212);
+			logger.debug("connected to registry 1212");
 			Center stub = (Center) registry.lookup("LVLServer");
+			logger.debug("connected to Laval server");
 			stub.editRecord(id, fieldname, newvalue);
 		} else {
 			registry = LocateRegistry.getRegistry(1111);
+			logger.debug("connected to registry 1111");
 			Center stub = (Center) registry.lookup("DDOServer");
+			logger.debug("connected to Dollard-des-Ormeaux server");
 			stub.editRecord(id, fieldname, newvalue);
 		}
+		logger.info("Using editRecord method");
 	}
 	
 	public static void connect_record_count(String managerID)
 			throws RemoteException, NotBoundException {
+		logger.info("Using getRecordCount method.");
 		if (managerID.substring(0, 3).equals("MTL")) {
 			registry = LocateRegistry.getRegistry(2964);
+			logger.debug("connected to registry 2964");
 			Center stub = (Center) registry.lookup("MTLServer");
+			logger.debug("connected to Montreal server");
 			String reply = stub.getRecordCounts();
 			System.out.println("Count : \n" + reply);
 		} else if (managerID.substring(0, 3).equals("LVL")) {
 			registry = LocateRegistry.getRegistry(1212);
+			logger.debug("connected to registry 1212");
 			Center stub = (Center) registry.lookup("LVLServer");
-			stub.getRecordCounts();
+			logger.debug("connected to Laval server");
+			String reply = stub.getRecordCounts();
+			System.out.println("Count : \n" + reply);
 		} else {
 			registry = LocateRegistry.getRegistry(1111);
+			logger.debug("connected to registry 1111");
 			Center stub = (Center) registry.lookup("DDOServer");
-			stub.getRecordCounts();
+			logger.debug("connected to Dollard-des-Ormeaux server");
+			String reply = stub.getRecordCounts();
+			System.out.println("Count : \n" + reply);
 		}
 	}
 
@@ -206,6 +248,7 @@ public class ManagerClient implements Runnable {
 		if (id.length() == 8) {
 			if (id.substring(0, 3).equals("MTR") || id.substring(0, 3).equals("LTR")
 					|| id.substring(0, 3).equals("DTR")) {
+				logger.info("Starting to edit teacher.");
 				if (fieldName.equals("address") || fieldName.equals("location") || fieldName.equals("phone")) {
 					return true;
 				} else {
@@ -214,6 +257,7 @@ public class ManagerClient implements Runnable {
 				}
 			} else if (id.substring(0, 3).equals("MSR") || id.substring(0, 3).equals("LSR")
 					|| id.substring(0, 3).equals("DSR")) {
+				logger.info("Starting to edit student.");
 				if (fieldName.equals("coursesRegistered") || fieldName.equals("status")
 						|| fieldName.equals("statusDueDate")) {
 					return true;
@@ -229,7 +273,7 @@ public class ManagerClient implements Runnable {
 			return false;
 		}
 	}
-
+	
 	public static void main(String[] args) throws IOException, NotBoundException, ServerNotActiveException {
 
 		ManagerClient managerClient = new ManagerClient();
@@ -241,9 +285,10 @@ public class ManagerClient implements Runnable {
 		String managerID = reader.readLine();
 
 		if (managerClient.managerIdentification(managerClient, managerID)) {
-
+			LogHelper helper = new LogHelper();
+			helper.setupLogFile("log/"+managerID+".log");
+			logger.debug("connected to manager client.");
 			do {
-
 				System.out.println("\n 1. Create Teacher ");
 				System.out.println(" 2. Create Student ");
 				System.out.println(" 3. Get Record Counts ");
@@ -264,6 +309,7 @@ public class ManagerClient implements Runnable {
 
 				switch (reader.readLine()) {
 				case "1":
+					logger.info("Starting to create teacher.");
 					System.out.println("Enter Teacher Information");
 					System.out.println("First Name : ");
 					firstName = s.nextLine();
@@ -280,6 +326,7 @@ public class ManagerClient implements Runnable {
 					connect_teacher(managerID, firstName, lastName, address, phone, spec, loc);
 					break;
 				case "2":
+					logger.info("Starting to create student.");
 					System.out.println("Enter Student Information");
 					System.out.println("First Name : ");
 					firstName = s.nextLine();
@@ -306,9 +353,9 @@ public class ManagerClient implements Runnable {
 					break;
 				case "3":
 					connect_record_count(managerID);
-					System.out.println("3");
 					break;
 				case "4":
+					//logger.info("Starting to edit .");
 					System.out.println("Enter information to edit : ");
 					System.out.println("ID : (e.g. MTR00001/MSR10001)");
 					id = s.nextLine();
@@ -325,6 +372,8 @@ public class ManagerClient implements Runnable {
 					}
 					break;
 				case "5":
+					File file = new File("log/"+managerID+".log");
+					file.delete();
 					System.out.println("Bye Bye!!!");
 					System.exit(0);
 					break;
