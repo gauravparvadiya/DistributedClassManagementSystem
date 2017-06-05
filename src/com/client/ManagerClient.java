@@ -195,7 +195,11 @@ public class ManagerClient implements Runnable {
 			logger.debug("connected to registry 2964");
 			Center stub = (Center) registry.lookup("MTLServer");
 			logger.debug("connected to Montreal server");
-			stub.editRecord(id, fieldname, newvalue, managerID);
+			if (stub.editRecord(id, fieldname, newvalue, managerID)) {
+				System.out.println("Record edited successfully.");
+			} else {
+				System.out.println("Error.");
+			}
 		} else if (managerID.substring(0, 3).equals("LVL")) {
 			registry = LocateRegistry.getRegistry(1212);
 			logger.debug("connected to registry 1212");
@@ -370,12 +374,16 @@ public class ManagerClient implements Runnable {
 						fieldName = s.nextLine();
 						System.out.println("New Value : ");
 						temp = s.nextLine();
-						if (temp.contains(",")) {
-							newValue = temp.split(",");
-						} else
-							newValue[0] = temp;
-						if (validate_edit(id, fieldName, newValue)) {
-							connect_edit(managerID, fieldName, newValue, id);
+						if (!temp.equals("")) {
+							if (temp.contains(",")) {
+								newValue = temp.split(",");
+							} else 
+								newValue[0] = temp;
+							if (validate_edit(id, fieldName, newValue)) {
+								connect_edit(managerID, fieldName, newValue, id);
+							}
+						} else {
+							System.out.println("Please enter all fields.");
 						}
 						break;
 					case "5":

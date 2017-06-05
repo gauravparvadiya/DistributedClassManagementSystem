@@ -43,6 +43,6 @@ public interface Center extends Remote{
 	 * @param newValue
 	 * @throws RemoteException
 	 */
-	public void editRecord (String recordID,String fieldName,String[] newValue,String managerID) throws RemoteException;
+	public Boolean editRecord (String recordID,String fieldName,String[] newValue,String managerID) throws RemoteException;
 	
 }

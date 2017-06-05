@@ -258,8 +258,8 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 		int id = Integer.parseInt(lastTRecordId.substring(3, 8));
 		lastTRecordId = "MTR" + "" + ++id;
 		Teacher t = new Teacher(firstName, lastName, address, phone, specialization, location, lastTRecordId);
-		logger.info(managerID + "| createTRecord method | Teacher information - [{" + firstName + ", " + lastName
-				+ ", " + address + ", " + phone + ", " + specialization + ", " + location + "}]");
+		logger.info(managerID + "| createTRecord method | Teacher information - [{" + firstName + ", " + lastName + ", "
+				+ address + ", " + phone + ", " + specialization + ", " + location + "}]");
 		addToMap(t);
 		logger.info(managerID + "| Teacher created successfully.");
 		return true;
@@ -272,8 +272,8 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 		int id = Integer.parseInt(lastSRecordId.substring(3, 8));
 		lastSRecordId = "MSR" + "" + ++id;
 		Student s = new Student(firstName, lastName, courseRegistered, status, statusDate, lastSRecordId);
-		logger.info(managerID + "| createSRecord method | Student information - [{" + firstName + ", " + lastName
-				+ ", " + courseRegistered + ", " + status + ", " + statusDate + "}]");
+		logger.info(managerID + "| createSRecord method | Student information - [{" + firstName + ", " + lastName + ", "
+				+ courseRegistered + ", " + status + ", " + statusDate + "}]");
 		addToMap(s);
 		logger.info(managerID + "| Student created successfully.");
 		return true;
@@ -331,7 +331,7 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 	}
 
 	@Override
-	public void editRecord(String recordID, String fieldName, String[] newValue, String managerID)
+	public Boolean editRecord(String recordID, String fieldName, String[] newValue, String managerID)
 			throws RemoteException {
 		Boolean result = false;
 		logger.info(managerID + "| Using editRecord method. Record ID : " + recordID);
@@ -353,10 +353,8 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 									s.setStatus(status);
 									logger.info(
 											managerID + "| Record - " + recordID + " status changed to " + newValue[0]);
-									System.out.println("Address is changed to : " + s.getStatus());
 								} else {
 									logger.info(managerID + "| Entered invalid status number.");
-									System.out.println("Enter 1 or 0 (active/deactive)");
 								}
 							} else if (fieldName.equals("statusDueDate")) {
 								Pattern pattern;
@@ -368,20 +366,18 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 									s.setStatusDueDate(newValue[0]);
 									logger.info(managerID + "| Record - " + recordID + " status date changed to "
 											+ newValue[0]);
-									System.out.println("Date is changed to : " + s.getStatusDueDate());
 								} else {
 									logger.info(managerID + "| Entered invalid date.");
-									System.out.println("Wrond date format");
 								}
 							} else if (fieldName.equals("coursesRegistered")) {
 								s.setCoursesRegistered(newValue);
 								logger.info(managerID + "| Record - " + recordID + " registered courses changed to "
 										+ newValue);
-								System.out.println("Courses are changed.");
 							}
-							return;
+							return result;
 						} else {
-							logger.info(managerID + "| Record id " + recordID + " not found.");
+							// logger.info(managerID + "| Record id " + recordID
+							// + " not found.");
 							result = false;
 						}
 					}
@@ -406,23 +402,21 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 								// System.out.println(".........." +
 								// t.getAddress());
 								t.setAddress(newValue[0]);
-								logger.info(managerID +  "| Record - " + recordID + " address changed to "+ newValue[0]);
-								System.out.println("Address is changed to : " + t.getAddress());
+								logger.info(
+										managerID + "| Record - " + recordID + " address changed to " + newValue[0]);
 								// print();
 							} else if (fieldName.equals("location")) {
 								t.setLocation(newValue[0]);
-								logger.info(managerID +  "| Record - " + recordID + " location changed to "+ newValue[0]);
-								System.out.println("Location is changed to : " + t.getLocation());
+								logger.info(
+										managerID + "| Record - " + recordID + " location changed to " + newValue[0]);
 							} else if (fieldName.equals("phone")) {
 								t.setPhone(newValue[0]);
-								logger.info(managerID +  "| Record - " + recordID + " phone number changed to "+ newValue[0]);
-								System.out.println("Phone is changed to : " + t.getPhone());
+								logger.info(managerID + "| Record - " + recordID + " phone number changed to "
+										+ newValue[0]);
 							}
-							return;
+							return result;
 						} else {
 							result = false;
-							logger.info(managerID +  "| Record - " + recordID + " not found.");
-							// System.out.println(result);
 						}
 					}
 
@@ -431,13 +425,13 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 
 		} else {
 			result = false;
-			// System.out.println(result);
 		}
 		if (!result) {
-			logger.info(managerID +  "| Record - " + recordID + " not found.");
+			logger.info(managerID + "| Record - " + recordID + " not found.");
 			System.out.println("no record found");
+			return result;
 		} else {
-
+			return result;
 		}
 	}
 
@@ -477,30 +471,19 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 		Registry registry = LocateRegistry.createRegistry(2964);
 		registry.bind("MTLServer", mtl);
 		mtl.logger.info("Server started");
-		
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				try {
-					DatagramSocket socket = new DatagramSocket(2964);
-					byte[] buffer = new byte[1];
-					while (true) {
-						DatagramPacket request = new DatagramPacket(buffer, buffer.length);
-						socket.receive(request);
-						mtl.logger.info("Request received from : " + request.getAddress() + ":" + request.getPort());
-						String replyStr = "MTL : " + mtl.getCount();
-						byte[] buffer1 = replyStr.getBytes();
-						DatagramPacket reply = new DatagramPacket(buffer1, buffer1.length, request.getAddress(), request.getPort());
-						socket.send(reply);
-						mtl.logger.info("Reply sent to : " + request.getAddress() + ":" + request.getPort());
-						//socket.close();
-					}
-				} catch (Exception e) {
-					// TODO: handle exception
-					mtl.logger.error("Exception | " + e.toString());
-				}
-			}
-		}).start();
+
+		while (true) {
+			DatagramSocket socket = new DatagramSocket(2964);
+			byte[] buffer = new byte[1];
+			DatagramPacket request = new DatagramPacket(buffer, buffer.length);
+			socket.receive(request);
+			mtl.logger.info("Request received from : " + request.getAddress() + ":" + request.getPort());
+			String replyStr = "MTL : " + mtl.getCount();
+			byte[] buffer1 = replyStr.getBytes();
+			DatagramPacket reply = new DatagramPacket(buffer1, buffer1.length, request.getAddress(), request.getPort());
+			socket.send(reply);
+			mtl.logger.info("Reply sent to : " + request.getAddress() + ":" + request.getPort());
+			socket.close();
+		}
 	}
 }
