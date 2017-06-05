@@ -276,109 +276,122 @@ public class ManagerClient implements Runnable {
 		t.start();
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("Enter the Manager ID : ");
-		String managerID = reader.readLine();
+		//System.out.println("Enter the Manager ID : ");
+		String managerID;// = reader.readLine();
+		do {
+			System.out.println("Enter the Manager ID : ");
+			managerID = reader.readLine();
+			
+			if ( !managerID.equals("") && managerClient.managerIdentification(managerClient, managerID)) {
+				LogHelper helper = new LogHelper();
+				helper.setupLogFile("log/" + managerID + ".log");
+				logger.debug("connected to manager client.");
+				do {
+					System.out.println("\n 1. Create Teacher ");
+					System.out.println(" 2. Create Student ");
+					System.out.println(" 3. Get Record Counts ");
+					System.out.println(" 4. Edit Record ");
+					System.out.println(" 5. Exit");
 
-		if (managerClient.managerIdentification(managerClient, managerID)) {
-			LogHelper helper = new LogHelper();
-			helper.setupLogFile("log/" + managerID + ".log");
-			logger.debug("connected to manager client.");
-			do {
-				System.out.println("\n 1. Create Teacher ");
-				System.out.println(" 2. Create Student ");
-				System.out.println(" 3. Get Record Counts ");
-				System.out.println(" 4. Edit Record ");
-				System.out.println(" 5. Exit");
+					reader = new BufferedReader(new InputStreamReader(System.in));
+					System.out.println("\n Enter your choice : ");
 
-				reader = new BufferedReader(new InputStreamReader(System.in));
-				System.out.println("\n Enter your choice : ");
+					Scanner s = new Scanner(System.in);
+					Integer status;
+					String firstName, lastName, address, phone, spec, loc, id, statusDate, fieldName, temp;
+					String DATE_PATTERN = "(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((19|20)\\d\\d)";
+					String[] courses;
+					String[] newValue = new String[5];
+					Pattern pattern;
+					Matcher matcher;
 
-				Scanner s = new Scanner(System.in);
-				Integer status;
-				String firstName, lastName, address, phone, spec, loc, id, statusDate, fieldName, temp;
-				String DATE_PATTERN = "(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((19|20)\\d\\d)";
-				String[] courses;
-				String[] newValue = new String[5];
-				Pattern pattern;
-				Matcher matcher;
-
-				switch (reader.readLine()) {
-				case "1":
-					logger.info("Starting to create teacher.");
-					System.out.println("Enter Teacher Information");
-					System.out.println("First Name : ");
-					firstName = s.nextLine();
-					System.out.println("Last Name : ");
-					lastName = s.nextLine();
-					System.out.println("Address : ");
-					address = s.nextLine();
-					System.out.println("Phone : ");
-					phone = s.nextLine();
-					System.out.println("Specialization : ");
-					spec = s.nextLine();
-					System.out.println("Location : ");
-					loc = s.nextLine();
-					connect_teacher(managerID, firstName, lastName, address, phone, spec, loc);
-					break;
-				case "2":
-					logger.info("Starting to create student.");
-					System.out.println("Enter Student Information");
-					System.out.println("First Name : ");
-					firstName = s.nextLine();
-					System.out.println("Last Name : ");
-					lastName = s.nextLine();
-					System.out.println("Courses registered (separated with comma) : ");
-					temp = s.nextLine();
-					courses = temp.split(",");
-					System.out.println("Status : (1 for active & 0 for deactive)");
-					status = s.nextInt();
-					s.nextLine();
-					System.out.println("Status Date : (DD/MM/YYYY)");
-					statusDate = s.nextLine();
-					pattern = Pattern.compile(DATE_PATTERN);
-					matcher = pattern.matcher(statusDate);
-					if (firstName != null && lastName != null && courses != null && status != null
-							&& statusDate != null) {
-						if (matcher.matches() && (status.equals(0) || status.equals(1))) {
-							connect_student(managerID, firstName, lastName, courses, status, statusDate);
+					switch (reader.readLine()) {
+					case "1":
+						logger.info("Starting to create teacher.");
+						System.out.println("Enter Teacher Information");
+						System.out.println("First Name : ");
+						firstName = s.nextLine();
+						System.out.println("Last Name : ");
+						lastName = s.nextLine();
+						System.out.println("Address : ");
+						address = s.nextLine();
+						System.out.println("Phone : ");
+						phone = s.nextLine();
+						System.out.println("Specialization : ");
+						spec = s.nextLine();
+						System.out.println("Location : ");
+						loc = s.nextLine();
+						if(!firstName.equals("") && !lastName.equals("") && !address.equals("") && phone.isEmpty() && spec != null && loc != null){
+							connect_teacher(managerID, firstName, lastName, address, phone, spec, loc);
+						}
+						else
+							System.out.println("Please enter all values.");
+						break;
+					case "2":
+						logger.info("Starting to create student.");
+						System.out.println("Enter Student Information");
+						System.out.println("First Name : ");
+						firstName = s.nextLine();
+						System.out.println("Last Name : ");
+						lastName = s.nextLine();
+						System.out.println("Courses registered (separated with comma) : ");
+						temp = s.nextLine();
+						courses = temp.split(",");
+						System.out.println("Status : (1 for active & 0 for deactive)");
+						status = s.nextInt();
+						s.nextLine();
+						System.out.println("Status Date : (DD/MM/YYYY)");
+						statusDate = s.nextLine();
+						pattern = Pattern.compile(DATE_PATTERN);
+						matcher = pattern.matcher(statusDate);
+						if (firstName != null && lastName != null && courses != null && status != null
+								&& statusDate != null) {
+							if (matcher.matches() && (status.equals(0) || status.equals(1))) {
+								connect_student(managerID, firstName, lastName, courses, status, statusDate);
+							} else
+								System.out.println("check if you have entered correct status or date or ID");
 						} else
-							System.out.println("check if you have entered correct status or date or ID");
-					} else
-						System.out.println("Field can not be blank");
-					break;
-				case "3":
-					connect_record_count(managerID);
-					break;
-				case "4":
-					// logger.info("Starting to edit .");
-					System.out.println("Enter information to edit : ");
-					System.out.println("ID : (e.g. MTR00001/MSR10001)");
-					id = s.nextLine();
-					System.out.println("Field Name : ");
-					fieldName = s.nextLine();
-					System.out.println("New Value : ");
-					temp = s.nextLine();
-					if (temp.contains(",")) {
-						newValue = temp.split(",");
-					} else
-						newValue[0] = temp;
-					if (validate_edit(id, fieldName, newValue)) {
-						connect_edit(managerID, fieldName, newValue, id);
+							System.out.println("Field can not be blank");
+						break;
+					case "3":
+						connect_record_count(managerID);
+						break;
+					case "4":
+						// logger.info("Starting to edit .");
+						System.out.println("Enter information to edit : ");
+						System.out.println("ID : (e.g. MTR00001/MSR10001)");
+						id = s.nextLine();
+						System.out.println("Field Name : ");
+						fieldName = s.nextLine();
+						System.out.println("New Value : ");
+						temp = s.nextLine();
+						if (temp.contains(",")) {
+							newValue = temp.split(",");
+						} else
+							newValue[0] = temp;
+						if (validate_edit(id, fieldName, newValue)) {
+							connect_edit(managerID, fieldName, newValue, id);
+						}
+						break;
+					case "5":
+						File file = new File("log/" + managerID + ".log");
+						file.delete();
+						System.out.println("Bye Bye!!!");
+						System.exit(0);
+						break;
+					default:
+						System.out.println("Invalid selection. Please select from given options.");
+						break;
 					}
-					break;
-				case "5":
-					File file = new File("log/" + managerID + ".log");
-					file.delete();
-					System.out.println("Bye Bye!!!");
-					System.exit(0);
-					break;
-				default:
-					System.out.println("Invalid selection. Please select from given options.");
-					break;
-				}
 
-			} while (!reader.readLine().equals("5"));
-		}
+				} while (!reader.readLine().equals("5"));
+			} else {
+				System.out.println("Manager not found.");
+			}
+			
+		}while(!managerID.equals("exit"));
+		
+		
 
 	}
 
