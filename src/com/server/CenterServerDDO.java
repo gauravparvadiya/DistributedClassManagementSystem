@@ -69,6 +69,11 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 	LogHelper helper;
 	Logger logger = Logger.getLogger(CenterServerDDO.class);
 
+	/**
+	 * Default constructor to initiate all arraylists
+	 * 
+	 * @throws Exception
+	 */
 	protected CenterServerDDO() throws Exception {
 		super();
 
@@ -104,6 +109,11 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 		helper.setupLogFile("log/DDOServer.log");
 	}
 
+	/**
+	 * Method to add teacher/student object to the hashmap
+	 * 
+	 * @param obj
+	 */
 	private void addToMap(Object obj) {
 
 		Student stud;
@@ -228,6 +238,9 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 		srtrRecords.put("Z", z);
 	}
 
+	/**
+	 * Method to add default records to the hashmap
+	 */
 	private void addDefaultRecords() {
 		File student = new File("res/student.json");
 		File teacher = new File("res/teacher.json");
@@ -281,7 +294,6 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 	@Override
 	public Boolean createTRecord(String firstName, String lastName, String address, String phone, String specialization,
 			String location, String managerID) throws RemoteException {
-		// TODO Auto-generated method stub
 		int id = Integer.parseInt(lastTRecordId.substring(3, 8));
 		System.out.println(id);
 		lastTRecordId = "DTR" + "" + ++id;
@@ -297,7 +309,6 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 	@Override
 	public Boolean createSRecord(String firstName, String lastName, String[] courseRegistered, Integer status,
 			String statusDate, String managerID) throws RemoteException {
-		// TODO Auto-generated method stub
 		System.out.println(a);
 		int id = Integer.parseInt(lastSRecordId.substring(3, 8));
 		System.out.println(id);
@@ -313,7 +324,6 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 
 	@Override
 	public String getRecordCounts(String managerID) throws RemoteException {
-		// TODO Auto-generated method stub
 		logger.info(managerID + "| Using getRecordCounts method.");
 		DatagramSocket socket = null;
 		String responseMsg = new String();
@@ -344,19 +354,15 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 			socket.receive(reply);
 			logger.info(managerID + "| Reply from MTL server : " + new String(reply.getData()));
 			responseMsg = responseMsg + ", " + new String(reply.getData()) + ", DDO " + getCount();
-			// System.out.println("Reply : " + new String(reply.getData()));
 			socket.close();
 			logger.info(managerID + "| Connection closed with MTL server.");
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			logger.error(managerID + "| Error in socket connection | " + e.toString());
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			logger.error(managerID + "| Unknownhost exception | " + e.toString());
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			logger.error(managerID + "| IO exception | " + e.toString());
 			e.printStackTrace();
 		}
@@ -409,8 +415,6 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 							}
 							return result;
 						} else {
-							// logger.info(managerID + "| Record id " + recordID
-							// + " not found.");
 							result = false;
 						}
 					}
@@ -429,15 +433,10 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 							System.out.println("Teacher found");
 							logger.info(managerID + "| Record id " + recordID + " identified as a teacher.");
 							result = true;
-							// System.out.println(result);
 							if (fieldName.equals("address")) {
-								// print();
-								// System.out.println(".........." +
-								// t.getAddress());
 								t.setAddress(newValue[0]);
 								logger.info(
 										managerID + "| Record - " + recordID + " address changed to " + newValue[0]);
-								// print();
 							} else if (fieldName.equals("location")) {
 								t.setLocation(newValue[0]);
 								logger.info(
@@ -468,6 +467,11 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 		}
 	}
 
+	/**
+	 * Method to get the no of records in hashmap
+	 * 
+	 * @return
+	 */
 	private int getCount() {
 		int counter = 0;
 		if (srtrRecords.size() > 0) {
@@ -487,7 +491,6 @@ public class CenterServerDDO extends UnicastRemoteObject implements Center {
 		ddo.addDefaultRecords();
 		Registry registry = LocateRegistry.createRegistry(1111);
 		registry.bind("DDOServer", ddo);
-		System.out.println("Server started.");
 		ddo.logger.info("Server started");
 
 		while (true) {

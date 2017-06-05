@@ -42,6 +42,11 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 	LogHelper helper;
 	Logger logger = Logger.getLogger(CenterServerMTL.class);
 
+	/**
+	 * Default constructor to initiate all arraylists
+	 * 
+	 * @throws Exception
+	 */
 	public CenterServerMTL() throws Exception {
 		super();
 
@@ -78,6 +83,9 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 		helper.setupLogFile("log/MTLServer.log");
 	}
 
+	/**
+	 * Method to add default records to the hashmap
+	 */
 	private void addDefaultRecords() {
 		File student = new File("res/student.json");
 		File teacher = new File("res/teacher.json");
@@ -128,6 +136,11 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 		}
 	}
 
+	/**
+	 * Method to add teacher/student object to the hashmap
+	 * 
+	 * @param obj
+	 */
 	private void addToMap(Object obj) {
 
 		Student stud;
@@ -254,7 +267,6 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 	@Override
 	public Boolean createTRecord(String firstName, String lastName, String address, String phone, String specialization,
 			String location, String managerID) throws RemoteException {
-		// TODO Auto-generated method stub
 		int id = Integer.parseInt(lastTRecordId.substring(3, 8));
 		lastTRecordId = "MTR" + "" + ++id;
 		Teacher t = new Teacher(firstName, lastName, address, phone, specialization, location, lastTRecordId);
@@ -268,7 +280,6 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 	@Override
 	public Boolean createSRecord(String firstName, String lastName, String[] courseRegistered, Integer status,
 			String statusDate, String managerID) throws RemoteException {
-		// TODO Auto-generated method stub
 		int id = Integer.parseInt(lastSRecordId.substring(3, 8));
 		lastSRecordId = "MSR" + "" + ++id;
 		Student s = new Student(firstName, lastName, courseRegistered, status, statusDate, lastSRecordId);
@@ -281,7 +292,6 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 
 	@Override
 	public String getRecordCounts(String managerID) throws RemoteException {
-		// TODO Auto-generated method stub
 		logger.info(managerID + "| Using getRecordCounts method.");
 		DatagramSocket socket = null;
 		String responseMsg = new String();
@@ -297,7 +307,6 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 			socket.receive(reply);
 			logger.info(managerID + "| Reply from LVL server : " + new String(reply.getData()));
-			// System.out.println("Reply : " + new String(reply.getData()));
 			responseMsg = new String(reply.getData());
 			socket.close();
 			logger.info(managerID + "| Connection closed with LVL server.");
@@ -310,19 +319,15 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 			socket.receive(reply);
 			logger.info(managerID + "| Reply from DDO server - " + new String(reply.getData()));
 			responseMsg = responseMsg + ", " + new String(reply.getData()) + ", MTL " + getCount();
-			// System.out.println("Reply : " + new String(reply.getData()));
 			socket.close();
 			logger.info(managerID + "| Connection closed with DDO server.");
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			logger.error(managerID + "| Error in socket connection | " + e.toString());
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			logger.error(managerID + "| Unknownhost exception | " + e.toString());
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			logger.error(managerID + "| IO exception | " + e.toString());
 			e.printStackTrace();
 		}
@@ -376,8 +381,6 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 							}
 							return result;
 						} else {
-							// logger.info(managerID + "| Record id " + recordID
-							// + " not found.");
 							result = false;
 						}
 					}
@@ -396,15 +399,10 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 							System.out.println("Teacher found");
 							logger.info(managerID + "| Record id " + recordID + " identified as a teacher.");
 							result = true;
-							// System.out.println(result);
 							if (fieldName.equals("address")) {
-								// print();
-								// System.out.println(".........." +
-								// t.getAddress());
 								t.setAddress(newValue[0]);
 								logger.info(
 										managerID + "| Record - " + recordID + " address changed to " + newValue[0]);
-								// print();
 							} else if (fieldName.equals("location")) {
 								t.setLocation(newValue[0]);
 								logger.info(

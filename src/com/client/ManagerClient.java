@@ -26,6 +26,7 @@ import com.google.gson.JsonParser;
 import com.helper.LogHelper;
 import com.rmi.Center;
 import com.users.Manager;
+
 import jdk.nashorn.internal.parser.JSONParser;
 
 public class ManagerClient implements Runnable {
@@ -36,11 +37,16 @@ public class ManagerClient implements Runnable {
 	static Registry registry;
 	static Logger logger = Logger.getLogger(ManagerClient.class);
 
+	/**
+	 * Default constructor that reads JSON file and puts data in manager hashmap
+	 * 
+	 * @throws FileNotFoundException
+	 */
 	public ManagerClient() throws FileNotFoundException {
 
 		File f = new File("res/manager.json");
-		Reader reader = new BufferedReader(new FileReader(f.getAbsolutePath())); // new
-																					// FileReader("com/res/Manager.json");
+		Reader reader = new BufferedReader(new FileReader(f.getAbsolutePath()));
+
 		JsonParser parser = new JsonParser();
 		JsonArray array = parser.parse(reader).getAsJsonArray();
 
@@ -53,7 +59,6 @@ public class ManagerClient implements Runnable {
 		if (array != null) {
 			for (int i = 0; i < array.size(); i++) {
 				JsonObject object = (JsonObject) array.get(i);
-				// System.out.println(object.get("managerID").getAsString());
 				Manager manager = new Manager(object.get("managerID").toString(), object.get("fname").toString(),
 						object.get("lname").toString());
 				if (object.get("managerID").getAsString().substring(0, 3).equals("MTL")) {
@@ -70,6 +75,15 @@ public class ManagerClient implements Runnable {
 		}
 	}
 
+	/**
+	 * Method to identify if the manager is exists or not
+	 * 
+	 * @param managerClient
+	 * @param managerID
+	 * @return
+	 * @throws RemoteException
+	 * @throws NotBoundException
+	 */
 	private Boolean managerIdentification(ManagerClient managerClient, String managerID)
 			throws RemoteException, NotBoundException {
 
@@ -116,6 +130,20 @@ public class ManagerClient implements Runnable {
 		return false;
 	}
 
+	/**
+	 * Method to connect the client to particular server
+	 * 
+	 * @param managerID
+	 * @param fn
+	 * @param ln
+	 * @param address
+	 * @param ph
+	 * @param spec
+	 * @param loc
+	 * @throws RemoteException
+	 * @throws NotBoundException
+	 * @throws ServerNotActiveException
+	 */
 	public static void connect_teacher(String managerID, String fn, String ln, String address, String ph, String spec,
 			String loc) throws RemoteException, NotBoundException, ServerNotActiveException {
 		logger.info("Using createTRecord method.");
@@ -152,6 +180,18 @@ public class ManagerClient implements Runnable {
 		}
 	}
 
+	/**
+	 * Method to connect client to particular server
+	 * 
+	 * @param managerID
+	 * @param fn
+	 * @param ln
+	 * @param courses
+	 * @param status
+	 * @param statusDate
+	 * @throws RemoteException
+	 * @throws NotBoundException
+	 */
 	public static void connect_student(String managerID, String fn, String ln, String[] courses, Integer status,
 			String statusDate) throws RemoteException, NotBoundException {
 		logger.info("Using createSRecord method.");
@@ -188,6 +228,16 @@ public class ManagerClient implements Runnable {
 		}
 	}
 
+	/**
+	 * Method to connect client to particular server
+	 * 
+	 * @param managerID
+	 * @param fieldname
+	 * @param newvalue
+	 * @param id
+	 * @throws RemoteException
+	 * @throws NotBoundException
+	 */
 	public static void connect_edit(String managerID, String fieldname, String[] newvalue, String id)
 			throws RemoteException, NotBoundException {
 		if (managerID.substring(0, 3).equals("MTL")) {
@@ -216,6 +266,13 @@ public class ManagerClient implements Runnable {
 		logger.info("Using editRecord method");
 	}
 
+	/**
+	 * Method to connect client to particular server
+	 * 
+	 * @param managerID
+	 * @throws RemoteException
+	 * @throws NotBoundException
+	 */
 	public static void connect_record_count(String managerID) throws RemoteException, NotBoundException {
 		logger.info("Using getRecordCount method.");
 		if (managerID.substring(0, 3).equals("MTL")) {
@@ -242,6 +299,14 @@ public class ManagerClient implements Runnable {
 		}
 	}
 
+	/**
+	 * Method to validate the edit method parameters
+	 * 
+	 * @param id
+	 * @param fieldName
+	 * @param newValue
+	 * @return
+	 */
 	public static boolean validate_edit(String id, String fieldName, String[] newValue) {
 
 		if (id.length() == 8) {
@@ -280,13 +345,13 @@ public class ManagerClient implements Runnable {
 		t.start();
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		//System.out.println("Enter the Manager ID : ");
-		String managerID;// = reader.readLine();
+		String managerID;
 		do {
 			System.out.println("Enter the Manager ID : ");
 			managerID = reader.readLine();
-			
-			if ( !managerID.equals("") && managerID.length() == 7  && managerClient.managerIdentification(managerClient, managerID)) {
+
+			if (!managerID.equals("") && managerID.length() == 7
+					&& managerClient.managerIdentification(managerClient, managerID)) {
 				LogHelper helper = new LogHelper();
 				helper.setupLogFile("log/" + managerID + ".log");
 				logger.debug("connected to manager client.");
@@ -325,10 +390,10 @@ public class ManagerClient implements Runnable {
 						spec = s.nextLine();
 						System.out.println("Location : ");
 						loc = s.nextLine();
-						if(!firstName.equals("") && !lastName.equals("") && !address.equals("") && !phone.equals("") && !spec.equals("") && !loc.equals("")){
+						if (!firstName.equals("") && !lastName.equals("") && !address.equals("") && !phone.equals("")
+								&& !spec.equals("") && !loc.equals("")) {
 							connect_teacher(managerID, firstName, lastName, address, phone, spec, loc);
-						}
-						else
+						} else
 							System.out.println("Please enter all values.");
 						break;
 					case "2":
@@ -343,7 +408,7 @@ public class ManagerClient implements Runnable {
 						courses = temp.split(",");
 						System.out.println("Status : (1 for active & 0 for deactive)");
 						String status1 = s.nextLine();
-						//s.nextLine();
+						// s.nextLine();
 						System.out.println("Status Date : (DD/MM/YYYY)");
 						statusDate = s.nextLine();
 						pattern = Pattern.compile(DATE_PATTERN);
@@ -366,7 +431,6 @@ public class ManagerClient implements Runnable {
 						connect_record_count(managerID);
 						break;
 					case "4":
-						// logger.info("Starting to edit .");
 						System.out.println("Enter information to edit : ");
 						System.out.println("ID : (e.g. MTR00001/MSR10001)");
 						id = s.nextLine();
@@ -377,7 +441,7 @@ public class ManagerClient implements Runnable {
 						if (!temp.equals("")) {
 							if (temp.contains(",")) {
 								newValue = temp.split(",");
-							} else 
+							} else
 								newValue[0] = temp;
 							if (validate_edit(id, fieldName, newValue)) {
 								connect_edit(managerID, fieldName, newValue, id);
@@ -401,12 +465,11 @@ public class ManagerClient implements Runnable {
 			} else {
 				System.out.println("Manager not found.");
 			}
-		}while(!managerID.equals("exit"));
+		} while (!managerID.equals("exit"));
 	}
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 	}
 
 }

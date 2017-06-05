@@ -19,7 +19,7 @@ public class LogHelper {
 	private Logger rootLogger;
 
 	/**
-	 * 
+	 * default constructor to define layout, file appender and rootlogger
 	 */
 	public LogHelper() {
 		super();
@@ -28,6 +28,11 @@ public class LogHelper {
 		rootLogger = Logger.getRootLogger();
 	}
 
+	/**
+	 * Method to set log file
+	 * 
+	 * @param fileName
+	 */
 	public void setupLogFile(String fileName) {
 		// creates pattern layout
 		String conversionPattern = "%-7p %d [%t] %c %x - %m%n";

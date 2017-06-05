@@ -42,6 +42,11 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 	LogHelper helper;
 	Logger logger = Logger.getLogger(CenterServerLVL.class);
 
+	/**
+	 * Default constructor to initiate all arraylists
+	 * 
+	 * @throws Exception
+	 */
 	protected CenterServerLVL() throws Exception {
 		super();
 
@@ -77,6 +82,11 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 		helper.setupLogFile("log/LVLServer.log");
 	}
 
+	/**
+	 * Method to add teacher/student object to the hashmap
+	 * 
+	 * @param obj
+	 */
 	private void addToMap(Object obj) {
 
 		Student stud;
@@ -201,6 +211,9 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 		srtrRecords.put("Z", z);
 	}
 
+	/**
+	 * Method to add default records to the hashmap
+	 */
 	private void addDefaultRecords() {
 		File student = new File("res/student.json");
 		File teacher = new File("res/teacher.json");
@@ -254,7 +267,6 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 	@Override
 	public Boolean createTRecord(String firstName, String lastName, String address, String phone, String specialization,
 			String location, String managerID) throws RemoteException {
-		// TODO Auto-generated method stub
 		int id = Integer.parseInt(lastTRecordId.substring(3, 8));
 		System.out.println(id);
 		lastTRecordId = "LTR" + "" + ++id;
@@ -270,7 +282,6 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 	@Override
 	public Boolean createSRecord(String firstName, String lastName, String[] courseRegistered, Integer status,
 			String statusDate, String managerID) throws RemoteException {
-		// TODO Auto-generated method stub
 		System.out.println(a);
 		int id = Integer.parseInt(lastSRecordId.substring(3, 8));
 		System.out.println(id);
@@ -286,7 +297,6 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 
 	@Override
 	public String getRecordCounts(String managerID) throws RemoteException {
-		// TODO Auto-generated method stub
 		logger.info(managerID + "| Using getRecordCounts method.");
 		DatagramSocket socket = null;
 		String responseMsg = new String();
@@ -318,15 +328,12 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 			logger.info(managerID + "| Connection closed with DDO server.");
 
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			logger.error(managerID + "| Error in socket connection | " + e.toString());
 			e.printStackTrace();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			logger.error(managerID + "| Unknownhost exception | " + e.toString());
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			logger.error(managerID + "| IO exception | " + e.toString());
 			e.printStackTrace();
 		}
@@ -379,8 +386,6 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 							}
 							return result;
 						} else {
-							// logger.info(managerID + "| Record id " + recordID
-							// + " not found.");
 							result = false;
 						}
 					}
@@ -399,15 +404,10 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 							System.out.println("Teacher found");
 							logger.info(managerID + "| Record id " + recordID + " identified as a teacher.");
 							result = true;
-							// System.out.println(result);
 							if (fieldName.equals("address")) {
-								// print();
-								// System.out.println(".........." +
-								// t.getAddress());
 								t.setAddress(newValue[0]);
 								logger.info(
 										managerID + "| Record - " + recordID + " address changed to " + newValue[0]);
-								// print();
 							} else if (fieldName.equals("location")) {
 								t.setLocation(newValue[0]);
 								logger.info(
@@ -438,6 +438,11 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 		}
 	}
 
+	/**
+	 * Method to get the no of records in hashmap
+	 * 
+	 * @return
+	 */
 	private int getCount() {
 		System.out.println("Here 4");
 		int counter = 0;
@@ -459,14 +464,12 @@ public class CenterServerLVL extends UnicastRemoteObject implements Center {
 		lvl.addDefaultRecords();
 		Registry registry = LocateRegistry.createRegistry(1212);
 		registry.bind("LVLServer", lvl);
-		System.out.println("Server started.");
 		lvl.logger.info("Server started");
 
 		while (true) {
 			DatagramSocket socket = new DatagramSocket(1212);
 			byte[] buffer = new byte[1];
 			DatagramPacket request = new DatagramPacket(buffer, buffer.length);
-			System.out.println("here3");
 			socket.receive(request);
 			lvl.logger.info("Request received from : " + request.getAddress() + ":" + request.getPort());
 			System.out.println("here2");
