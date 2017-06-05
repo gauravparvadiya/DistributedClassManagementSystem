@@ -282,7 +282,7 @@ public class ManagerClient implements Runnable {
 			System.out.println("Enter the Manager ID : ");
 			managerID = reader.readLine();
 			
-			if ( !managerID.equals("") && managerClient.managerIdentification(managerClient, managerID)) {
+			if ( !managerID.equals("") && managerID.length() == 7  && managerClient.managerIdentification(managerClient, managerID)) {
 				LogHelper helper = new LogHelper();
 				helper.setupLogFile("log/" + managerID + ".log");
 				logger.debug("connected to manager client.");
@@ -388,11 +388,7 @@ public class ManagerClient implements Runnable {
 			} else {
 				System.out.println("Manager not found.");
 			}
-			
 		}while(!managerID.equals("exit"));
-		
-		
-
 	}
 
 	@Override
