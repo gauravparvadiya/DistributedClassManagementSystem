@@ -321,7 +321,7 @@ public class ManagerClient implements Runnable {
 						spec = s.nextLine();
 						System.out.println("Location : ");
 						loc = s.nextLine();
-						if(!firstName.equals("") && !lastName.equals("") && !address.equals("") && phone.isEmpty() && spec != null && loc != null){
+						if(!firstName.equals("") && !lastName.equals("") && !address.equals("") && !phone.equals("") && !spec.equals("") && !loc.equals("")){
 							connect_teacher(managerID, firstName, lastName, address, phone, spec, loc);
 						}
 						else
@@ -338,18 +338,23 @@ public class ManagerClient implements Runnable {
 						temp = s.nextLine();
 						courses = temp.split(",");
 						System.out.println("Status : (1 for active & 0 for deactive)");
-						status = s.nextInt();
-						s.nextLine();
+						String status1 = s.nextLine();
+						//s.nextLine();
 						System.out.println("Status Date : (DD/MM/YYYY)");
 						statusDate = s.nextLine();
 						pattern = Pattern.compile(DATE_PATTERN);
 						matcher = pattern.matcher(statusDate);
-						if (firstName != null && lastName != null && courses != null && status != null
-								&& statusDate != null) {
-							if (matcher.matches() && (status.equals(0) || status.equals(1))) {
-								connect_student(managerID, firstName, lastName, courses, status, statusDate);
-							} else
-								System.out.println("check if you have entered correct status or date or ID");
+						if (!firstName.equals("") && !lastName.equals("") && courses.length != 0 && !status1.equals("")
+								&& !statusDate.equals("")) {
+							if (status1.equals("0") || status1.equals("1")) {
+								status = Integer.parseInt(status1);
+								if (matcher.matches() && (status.equals(0) || status.equals(1))) {
+									connect_student(managerID, firstName, lastName, courses, status, statusDate);
+								} else
+									System.out.println("check if you have entered correct status or date or ID");
+							} else {
+								System.out.println("Invalid status!");
+							}
 						} else
 							System.out.println("Field can not be blank");
 						break;
