@@ -358,8 +358,10 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 									s.setStatus(status);
 									logger.info(
 											managerID + "| Record - " + recordID + " status changed to " + newValue[0]);
+									result=true;
 								} else {
 									logger.info(managerID + "| Entered invalid status number.");
+									result=false;
 								}
 							} else if (fieldName.equals("statusDueDate")) {
 								Pattern pattern;
@@ -371,13 +373,16 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 									s.setStatusDueDate(newValue[0]);
 									logger.info(managerID + "| Record - " + recordID + " status date changed to "
 											+ newValue[0]);
+									result=true;
 								} else {
 									logger.info(managerID + "| Entered invalid date.");
+									result=false;
 								}
 							} else if (fieldName.equals("coursesRegistered")) {
 								s.setCoursesRegistered(newValue);
 								logger.info(managerID + "| Record - " + recordID + " registered courses changed to "
 										+ newValue);
+								result=true;
 							}
 							return result;
 						} else {
@@ -403,14 +408,17 @@ public class CenterServerMTL extends UnicastRemoteObject implements Center {
 								t.setAddress(newValue[0]);
 								logger.info(
 										managerID + "| Record - " + recordID + " address changed to " + newValue[0]);
+								result=true;
 							} else if (fieldName.equals("location")) {
 								t.setLocation(newValue[0]);
 								logger.info(
 										managerID + "| Record - " + recordID + " location changed to " + newValue[0]);
+								result=true;
 							} else if (fieldName.equals("phone")) {
 								t.setPhone(newValue[0]);
 								logger.info(managerID + "| Record - " + recordID + " phone number changed to "
 										+ newValue[0]);
+								result=true;
 							}
 							return result;
 						} else {
