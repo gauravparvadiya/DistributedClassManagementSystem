@@ -255,13 +255,17 @@ public class ManagerClient implements Runnable {
 			logger.debug("connected to registry 1212");
 			Center stub = (Center) registry.lookup("LVLServer");
 			logger.debug("connected to Laval server");
-			stub.editRecord(id, fieldname, newvalue, managerID);
+			if (stub.editRecord(id, fieldname, newvalue, managerID)) {
+				System.out.println("Record edited successfully.");
+			}
 		} else {
 			registry = LocateRegistry.getRegistry(1111);
 			logger.debug("connected to registry 1111");
 			Center stub = (Center) registry.lookup("DDOServer");
 			logger.debug("connected to Dollard-des-Ormeaux server");
-			stub.editRecord(id, fieldname, newvalue, managerID);
+			if (stub.editRecord(id, fieldname, newvalue, managerID)) {
+				System.out.println("Record edited successfully.");
+			}
 		}
 		logger.info("Using editRecord method");
 	}
